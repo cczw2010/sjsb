@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<info>
+<isnew>0</isnew>
+<version>v2.5</version>
+<version_code></version_code>
+<descr>new</descr>
+<url><![CDATA[http://www.ssms.com]]></url>
+<change_log>new ui</change_log>
+<change_time>2011-9-8</change_time>
+<signature></signature>
+
+<tpl_isnew>0</tpl_isnew>
+<tpl_file>http://www.ssms.com/tpl/assets.zip</tpl_file>
+<tpl_sign>a9e627ce9604354f78a9b8668b8752f1</tpl_sign>	
+
+<list>
+<item>
+<pattern>img_*</pattern>
+<indent>10</indent>
+<number>100</number>
+</item>
+<item>
+<pattern>img_1</pattern>
+<indent>11</indent>
+<number>101</number>
+</item>
+</list>
+<event>
+	<name>shake</name>
+	<status>1</status>
+	<file_index>0</file_index>
+	<pics>
+	</pics>
+	<files>
+		<file>http://www.ssms.com</file>
+		<file>2</file>
+	</files>
+</event>
+</info>
