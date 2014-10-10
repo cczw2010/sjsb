@@ -9,16 +9,18 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 
 @SuppressLint({ "InlinedApi", "HandlerLeak" })
-public class SwipeRefreshActivity  extends Activity implements SwipeRefreshLayout.OnRefreshListener
+public class SwipeRefreshActivity  extends Activity
 {
 
 	private static final int REFRESH_COMPLETE = 0X110;
 	private SwipeRefreshLayout mSwipeLayout;
+	private OnRefreshListener swipeListener;
 	private ListView mListView;
 	private ArrayAdapter<String> mAdapter;
 	private List<String> mDatas = new ArrayList<String>(Arrays.asList("Java", "Javascript", "C++", "Ruby", "Json",
@@ -47,21 +49,20 @@ public class SwipeRefreshActivity  extends Activity implements SwipeRefreshLayou
 
 		mListView = (ListView) findViewById(R.id.id_listview);
 		mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.id_swipe_ly);
-
-		mSwipeLayout.setOnRefreshListener(this);
+		
+		swipeListener = new OnRefreshListener() {
+			@Override
+			public void onRefresh() {
+				mHandler.sendEmptyMessageDelayed(REFRESH_COMPLETE, 2000);
+				
+			}
+		};
+		
+		mSwipeLayout.setOnRefreshListener(swipeListener);
 		mSwipeLayout.setColorScheme(android.R.color.holo_green_dark, android.R.color.holo_green_light,
 				android.R.color.holo_orange_light, android.R.color.holo_red_light);
 		mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, mDatas);
 		mListView.setAdapter(mAdapter);
-
-	}
-
-	public void onRefresh()
-	{
-		// Log.e("xxx", Thread.currentThread().getName());
-		// UI Thread
-
-		mHandler.sendEmptyMessageDelayed(REFRESH_COMPLETE, 2000);
 
 	}
 }
