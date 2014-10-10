@@ -109,7 +109,7 @@ public class BaseActivity extends Activity {
 		swebview.setHorizontalScrollbarOverlay(false);
 		swebview.setVerticalScrollBarEnabled(false);
 		swebview.setVerticalScrollbarOverlay(false);
-		swebview.setVerticalFadingEdgeEnabled(true);
+		swebview.setVerticalFadingEdgeEnabled(false);
 		swebview.requestFocus();// 支持网页内部操作，比如点击按钮
 //		swebview.setFocusable(true);
 		swebview.setSelected(false);
