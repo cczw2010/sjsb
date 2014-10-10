@@ -31,7 +31,7 @@ public class BaseActivity extends Activity {
 	public WebView swebview = null;
 	private Handler shandler = null;
 	
-	protected HashMap<String,String> loadFns = null;	//页面加载完毕后执行（完后删除）的回调函数(key),参数字符串（val）
+	//protected HashMap<String,String> loadFns = null;	//页面加载完毕后执行（完后删除）的回调函数(key),参数字符串（val）
 	public static String EXITAPP_MESSAGE = "exitapp";   //退出程序的标示
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -41,7 +41,7 @@ public class BaseActivity extends Activity {
 		
 		app = (MyApplication) MyApplication.getInstance();
 		shandler = new BaseHandler();
-		loadFns = new HashMap<String, String>();
+		//loadFns = new HashMap<String, String>();
 		//处理退出消息
 		Intent intent = getIntent();
 		String msg = intent.getStringExtra("data");
@@ -152,14 +152,14 @@ public class BaseActivity extends Activity {
 		@Override
 		public void onProgressChanged(WebView view, int newProgress) {
 			//Log.d("SJSB", "onProgressChanged newProgress:>"+newProgress);
-			if(newProgress==100){
-		        Set<String> key = loadFns.keySet();
-		        for (Iterator<String> it = key.iterator();it.hasNext();) {
-					String fn = it.next();
-					runjs(fn+"('"+loadFns.get(fn)+"')");
-				}
-		        loadFns.clear();
-			}
+			//if(newProgress==100){
+		    //    Set<String> key = loadFns.keySet();
+		    //    for (Iterator<String> it = key.iterator();it.hasNext();) {
+			//		String fn = it.next();
+			//		runjs(fn+"('"+loadFns.get(fn)+"')");
+			//	}
+		    //    loadFns.clear();
+			//}
 			super.onProgressChanged(view, newProgress);
 		}
 	}
@@ -204,11 +204,11 @@ public class BaseActivity extends Activity {
 		if(callback!=null && ""!=callback){
 			//sdk19 以后onActivityResult返回当前页后会刷新,所以如果此处要执行js,
 			//很可能js执行时页面还没有加载完毕，造成异常
-			if(Build.VERSION.SDK_INT<19 || swebview.getProgress()<100){
+			//if(Build.VERSION.SDK_INT<19 || swebview.getProgress()<100){
 				runjs(callback+"('"+result+"')");
-			}else{
-				loadFns.put(callback, result);
-			}
+			//}else{
+			//	loadFns.put(callback, result);
+			//}
 		}
 	}
 	/* ----------------------- common method --------------------------- */

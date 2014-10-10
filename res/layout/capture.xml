@@ -40,7 +40,6 @@
             android:layout_height="85.0dip"
             android:layout_marginLeft="10dip"
             android:gravity="center"
-            android:textAlignment="center"
             android:text="@string/top_hint"
             android:textColor="#ffffffff"
             android:textSize="13.0sp" />

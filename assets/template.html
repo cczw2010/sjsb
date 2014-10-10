@@ -51,7 +51,7 @@
 		<button id="deviceinfo">设备信息</button>
 	</li>
 	<li>
-		<button id="webwh">获取webview宽高</button>
+		<button id="webwh">获取webview分辨率</button>
 	</li>
 	<li>
 		<button id="log">打印log日志</button>
@@ -122,7 +122,6 @@
 				SJSB.toast('ok',4,1);
 			break;
 			case 'webwh':
-			alert(window.innerWidth+':'+window.innerHeight);
 				var w = SJSB.getWebWidth(),
 					h = SJSB.getWebHeight();
 				SJSB.toast(w+':'+h,0,1);
