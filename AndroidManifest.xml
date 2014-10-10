@@ -17,7 +17,9 @@
 				<!--<data android:mimeType="image/*" />  //可监听图片打开-->
             </intent-filter>
         </activity>
-       <activity android:name="SJSBTestActivity"></activity>
+        <activity android:name="SJSBTestActivity"></activity>
+        <!-- swiperefresh -->
+        <activity android:name="SwipeRefreshActivity"  android:hardwareAccelerated="true"></activity>
         <!-- qrcode -->
         <activity android:name="cn.hugo.android.scanner.CaptureActivity" 
             android:configChanges="orientation|keyboardHidden"

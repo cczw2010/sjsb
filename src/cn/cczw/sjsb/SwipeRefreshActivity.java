@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 
+@SuppressLint({ "InlinedApi", "HandlerLeak" })
 public class SwipeRefreshActivity  extends Activity implements SwipeRefreshLayout.OnRefreshListener
 {
 
