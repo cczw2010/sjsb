@@ -28,9 +28,6 @@ public class MainActivity extends BaseActivity {
 				case R.id.button1:
 					intent.setClass(MainActivity.this, SJSBTestActivity.class);
 					break;
-				case R.id.button2:
-					intent.setClass(MainActivity.this, SwipeRefreshActivity.class);
-					break;
 				}			
 				startActivity(intent);
 			}
@@ -45,12 +42,12 @@ public class MainActivity extends BaseActivity {
 	@SuppressLint("InlinedApi")
 	public void initView(){
 		btn1 = (Button) findViewById(R.id.button1);
-		btn2 = (Button) findViewById(R.id.button2);
+//		btn2 = (Button) findViewById(R.id.button2);
 	}
 	
 	public void initEvent(){
 		btn1.setOnClickListener(btnclick);
-		btn2.setOnClickListener(btnclick);
+//		btn2.setOnClickListener(btnclick);
 	}
 	
 }

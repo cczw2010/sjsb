@@ -14,11 +14,11 @@ public class Constants {
 	final public static int JS_REQUEST_CODE_CAMERA_CAPTURE = 930002;//js相机缩略图 request_code
     final public static int JS_SCANNING_REQUEST_CODE = 930003;   	//js扫二维码 request_code
     // message部分
-    final public static int MESSAGE_RUNJS = 1000;   	//执行js的message
-
+    final public static int MESSAGE_REFRESHDISABLE = 1000;   //下拉刷新是否可用
 	//js回调函数
 	public static String JS_CAMERA_CALLBACK = null;		//相机回调
 	public static String JS_MENUBTN_CALLBACK = null;	//菜单键回调
 	public static String JS_BACKBTN_CALLBACK = null;	//返回按钮回调
+	public static String JS_SWIPEREFRESH_CALLBACK = null;	//下拉刷新时的回调
 
 }

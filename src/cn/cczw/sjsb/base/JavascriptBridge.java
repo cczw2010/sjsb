@@ -91,6 +91,14 @@ public class JavascriptBridge {
 		Constants.JS_BACKBTN_CALLBACK = callback;
 	}
 	/**
+	 * 设置当前页下拉刷新是否可用
+	 * @param can   1 可用 0，不可用
+	 */
+	@JavascriptInterface
+	public void disSwipeRefresh(){
+		((BaseActivity) activitycontent).sendmessage(Constants.MESSAGE_REFRESHDISABLE, null,null);
+	}
+	/**
 	 * 退出应用
 	 */
 	@JavascriptInterface
