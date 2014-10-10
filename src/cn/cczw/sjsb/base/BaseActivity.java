@@ -1,6 +1,7 @@
 package cn.cczw.sjsb.base;
 
 import java.io.File;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -9,6 +10,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -21,14 +24,18 @@ import android.webkit.WebViewClient;
 import cn.cczw.comm.MyApplication;
 import cn.cczw.comm.MyChromeClient;
 import cn.cczw.sjsb.MainActivity;
+import cn.cczw.sjsb.R;
 
+@SuppressLint("InlinedApi")
 public class BaseActivity extends Activity {
  	public MyApplication app = null;
 	public WebView swebview = null;
 	private Handler shandler = null;
-	
+	private SwipeRefreshLayout mSwipeLayout;
+	private OnRefreshListener swipeListener;
 	//protected HashMap<String,String> loadFns = null;	//页面加载完毕后执行（完后删除）的回调函数(key),参数字符串（val）
 	public static String EXITAPP_MESSAGE = "exitapp";   //退出程序的标示
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -38,6 +45,7 @@ public class BaseActivity extends Activity {
 		app = (MyApplication) MyApplication.getInstance();
 		shandler = new BaseHandler();
 		//loadFns = new HashMap<String, String>();
+		
 		//处理退出消息
 		Intent intent = getIntent();
 		String msg = intent.getStringExtra("data");
@@ -67,9 +75,22 @@ public class BaseActivity extends Activity {
 	// 初始化webview,context为当前activity上下文  即.Activity.this
 	@SuppressLint("SetJavaScriptEnabled")
 	@SuppressWarnings("deprecation")
-	public void initWebView(int webviewid, String url) {
+	public void initWebView(int webviewid,String url,boolean hasSwipeRefresh) {
 		swebview = (WebView) findViewById(webviewid);
-		
+		//下拉刷新
+		if(hasSwipeRefresh){
+			swipeListener = new OnRefreshListener() {
+				@Override
+				public void onRefresh() {
+					swebview.reload();
+				}
+			};
+			mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.id_swipe_container);
+			mSwipeLayout.setColorScheme(android.R.color.holo_green_dark, android.R.color.holo_green_light,
+					android.R.color.holo_orange_light, android.R.color.holo_red_light);
+			mSwipeLayout.setOnRefreshListener(swipeListener);
+		}
+
 		WebSettings ws = swebview.getSettings();
 		ws.setJavaScriptCanOpenWindowsAutomatically(true);
 
@@ -126,13 +147,18 @@ public class BaseActivity extends Activity {
 	class webviewClient extends WebViewClient{
  		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
-			Log.d("SJSB", "shouldOverrideUrlLoading url=" + url);
+			//Log.d("SJSB", "shouldOverrideUrlLoading url=" + url);
 			//Uri uri = Uri.parse(url); // url为你要链接的地址
 			//view.loadUrl(url);
             return super.shouldOverrideUrlLoading(view, url);
 		}
 		@Override
 		public void onPageFinished(WebView view, String url) {
+			//Log.d("sjsb","load finished");
+			//如果带下拉刷新，清空动画
+			if(mSwipeLayout!=null){
+				mSwipeLayout.setRefreshing(false);
+			}
 			super.onPageFinished(view, url);
 		}
 		@Override
@@ -208,6 +234,26 @@ public class BaseActivity extends Activity {
 		}
 	}
 	/* ----------------------- common method --------------------------- */
+	/**
+	 * 所有公共的message消息都从这里处理，包括js消息
+	 * @author awen
+	 *
+	 */
+	class BaseHandler extends Handler{
+		@Override
+		public void handleMessage(Message msg) {
+			//Log.d("sjsb-msg",msg.toString());
+			Bundle bundle = msg.getData();
+			switch (msg.what) {
+			case Constants.MESSAGE_REFRESHDISABLE:
+				//设置下拉刷新不可用
+				mSwipeLayout.setEnabled(false);
+				break;
+			default:
+				break;
+			}
+		}
+	}
 	// 发送消息
 	public void sendmessage(int message,String fn, String param) {
 		Message msg = shandler.obtainMessage(message);
@@ -238,4 +284,5 @@ public class BaseActivity extends Activity {
 			//swebview.evaluateJavascript("javascript:"+jsstr,null);
 		//}
 	}
+	
 } // cls

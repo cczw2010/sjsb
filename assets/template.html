@@ -101,6 +101,9 @@
 		<button id="vibratorstop">停止</button>
 	</li>
 	<li>
+		<button id="refreshdis">设置下拉刷新不可用</button>
+	</li>
+	<li>
 		<button id="menubtn">设置menu键的回调</button>
 	</li>
 	<li>
@@ -115,6 +118,7 @@
 	</li>
 </ul>
 <script	type="text/javascript">
+	var refreshstatus = 1;
 	document.body.addEventListener('click',function(e){
 		var o = e.target;
 		switch(o.id){
@@ -205,6 +209,9 @@
 				break;
 			case "vibrator2":
 				SJSB.vibrator(1000,100,0);
+				break;
+			case "refreshdis":
+				SJSB.disSwipeRefresh();
 				break;
 		}
 	});
