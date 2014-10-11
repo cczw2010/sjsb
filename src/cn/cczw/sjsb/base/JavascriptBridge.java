@@ -339,12 +339,13 @@ public class JavascriptBridge {
 	}
 	/**
 	 * 获取gps
+	 * return string (longitude 精度，latitude维度，altitude海拔,accuracy精度)
 	 */
 	@JavascriptInterface
 	public String getGps(){
-
-		Location loc = GpsApi.getInstance().getLastLocation();
-		return loc==null?"":"{\"longitude\":"+loc.getLongitude()+";\"latitude\":"+loc.getLatitude()+",\"acc\":"+loc.getAccuracy()+"}";
+//		Location loc = GpsApi.getInstance().getLastLocation();
+		Location loc = GpsApi.getInstance().getLocationByNet();
+		return loc==null?"":"{\"longitude\":"+loc.getLongitude()+";\"latitude\":"+loc.getLatitude()+",\"accuracy\":"+loc.getAccuracy()+",\"altitude\":"+loc.getAltitude()+"}";
 	}
 	/**
 	 * 开始震动  

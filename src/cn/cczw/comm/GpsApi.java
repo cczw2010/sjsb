@@ -19,7 +19,7 @@ public class GpsApi {
 		if(instance==null){
 			// 获取LocationManager对象
 			lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-	
+			//-------------------------gps方式
 			// 定义Criteria对象
 			criteria = new Criteria();
 			// 设置定位精确度 Criteria.ACCURACY_COARSE 比较粗略， Criteria.ACCURACY_FINE则比较精细
@@ -29,7 +29,7 @@ public class GpsApi {
 			// 设置是否需要方位信息 Bearing
 			criteria.setBearingRequired(true);
 			// 设置是否允许运营商收费
-			criteria.setCostAllowed(true);
+			criteria.setCostAllowed(false);
 			// 设置对电源的需求
 			criteria.setPowerRequirement(Criteria.POWER_LOW);
 	
@@ -89,8 +89,13 @@ public class GpsApi {
 	public static GpsApi getInstance(){
 		return instance;
 	}
-	//获取最新的地址信息
+	//获取最新的地址信息  gps方式
 	public Location getLastLocation(){
 		return bestProvider==null?null:lm.getLastKnownLocation(bestProvider);
+	}
+	//获取最新的地址信息  network方式
+	public Location getLocationByNet(){
+		//-------------------------network方式
+	    return lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 	}
 }

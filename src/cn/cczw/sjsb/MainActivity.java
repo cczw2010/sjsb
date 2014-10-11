@@ -3,7 +3,6 @@ package cn.cczw.sjsb;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -23,7 +22,6 @@ public class MainActivity extends BaseActivity {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent();
-				Log.d("sjsb",v.getId()+"");
 				switch(v.getId()){
 				case R.id.button1:
 					intent.setClass(MainActivity.this, SJSBTestActivity.class);

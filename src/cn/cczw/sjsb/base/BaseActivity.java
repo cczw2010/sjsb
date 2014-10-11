@@ -54,12 +54,13 @@ public class BaseActivity extends Activity {
 		}
 	}
 	@Override
-	public boolean onMenuOpened(int featureId, Menu menu) {
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		Log.d("SJSB",Constants.JS_MENUBTN_CALLBACK+"==JS_MENUBTN_CALLBACK");
 		if(Constants.JS_MENUBTN_CALLBACK!=null && Constants.JS_MENUBTN_CALLBACK!=""){
 			runjs(Constants.JS_MENUBTN_CALLBACK+"()");
 			return false;
 		}else{
-			return super.onMenuOpened(featureId, menu);
+			return super.onPrepareOptionsMenu(menu);
 		}
 	}
 	@Override
@@ -70,7 +71,7 @@ public class BaseActivity extends Activity {
 	 		super.onBackPressed();
 		}
 	}
-
+	
 	/* ----------------------- web --------------------------- */
 	// 初始化webview,context为当前activity上下文  即.Activity.this
 	@SuppressLint("SetJavaScriptEnabled")
@@ -121,7 +122,7 @@ public class BaseActivity extends Activity {
   		//设置应用缓存的路径
   		//ws.setAppCachePath(dir);
   		//设置缓存的模式
-  		ws.setCacheMode(WebSettings.LOAD_DEFAULT);
+  		ws.setCacheMode(WebSettings.LOAD_NO_CACHE);
   		//设置应用缓存的最大尺寸
   		//ws.setAppCacheMaxSize(1024*1024*8);
 
