@@ -51,7 +51,7 @@ public class BaseActivity extends Activity {
 		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE); //防止input被键盘挡住，缩放
 		
 		app = (MyApplication) MyApplication.getInstance();
-		shandler = new BaseHandler();
+		//shandler = new BaseHandler();
 		//loadFns = new HashMap<String, String>();
 		
 		//处理退出消息
@@ -248,21 +248,21 @@ public class BaseActivity extends Activity {
 	 * @author awen
 	 *
 	 */
-	class BaseHandler extends Handler{
-		@Override
-		public void handleMessage(Message msg) {
-			//Log.d("sjsb-msg",msg.toString());
-			Bundle bundle = msg.getData();
-			switch (msg.what) {
-			case Constants.MESSAGE_REFRESHDISABLE:
-				//设置下拉刷新不可用
-				mSwipeLayout.setEnabled(false);
-				break;
-			default:
-				break;
-			}
-		}
-	}
+	//class BaseHandler extends Handler{
+	//	@Override
+	//	public void handleMessage(Message msg) {
+	//		//Log.d("sjsb-msg",msg.toString());
+	//		Bundle bundle = msg.getData();
+	//		switch (msg.what) {
+	//		case Constants.MESSAGE_REFRESHDISABLE:
+	//			//设置下拉刷新不可用
+	//			mSwipeLayout.setEnabled(false);
+	//			break;
+	//		default:
+	//			break;
+	//		}
+	//	}
+	//}
 	// 发送消息
 	public void sendmessage(int message,String fn, String param) {
 		Message msg = shandler.obtainMessage(message);

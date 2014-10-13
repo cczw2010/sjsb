@@ -1,7 +1,6 @@
 package cn.cczw.comm;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -67,33 +66,33 @@ public class GpsApi {
 	class myLocationListener implements BDLocationListener{
 		@Override
 		public void onReceiveLocation(BDLocation location) {
-			if (location != null){
+			if (location != null && location.getLatitude()!=4.9e-324 && location.getLongitude()!=4.9e-324){
 				mlocation = location;
-				StringBuffer sb = new StringBuffer(256);
-				sb.append("time : ");
-				sb.append(location.getTime());
-				sb.append("\nerror code : ");
-				sb.append(location.getLocType());
-				sb.append("\nlatitude : ");
-				sb.append(location.getLatitude());
-				sb.append("\nlontitude : ");
-				sb.append(location.getLongitude());
-				sb.append("\nCity : ");
-				sb.append(location.getCity());
-				sb.append("\nAddrStr : ");
-				sb.append(location.getAddrStr());
-				sb.append("\nradius : ");
-				sb.append(location.getRadius());
-				if (location.getLocType() == BDLocation.TypeGpsLocation){
-					sb.append("\nspeed : ");
-					sb.append(location.getSpeed());
-					sb.append("\nsatellite : ");
-					sb.append(location.getSatelliteNumber());
-				} else if (location.getLocType() == BDLocation.TypeNetWorkLocation){
-					sb.append("\naddr : ");
-					sb.append(location.getAddrStr());
-				}
-				Log.d("sjsb",sb.toString());
+				//StringBuffer sb = new StringBuffer(256);
+				//sb.append("time : ");
+				//sb.append(location.getTime());
+				//sb.append("\nerror code : ");
+				//sb.append(location.getLocType());
+				//sb.append("\nlatitude : ");
+				//sb.append(location.getLatitude());
+				//sb.append("\nlontitude : ");
+				//sb.append(location.getLongitude());
+				//sb.append("\nCity : ");
+				//sb.append(location.getCity());
+				//sb.append("\nAddrStr : ");
+				//sb.append(location.getAddrStr());
+				//sb.append("\nradius : ");
+				//sb.append(location.getRadius());
+				//if (location.getLocType() == BDLocation.TypeGpsLocation){
+				//	sb.append("\nspeed : ");
+				//	sb.append(location.getSpeed());
+				//	sb.append("\nsatellite : ");
+				//	sb.append(location.getSatelliteNumber());
+				//} else if (location.getLocType() == BDLocation.TypeNetWorkLocation){
+				//	sb.append("\naddr : ");
+				//	sb.append(location.getAddrStr());
+				//}
+				//Log.d("sjsb",sb.toString());
 			}
 		}
 		

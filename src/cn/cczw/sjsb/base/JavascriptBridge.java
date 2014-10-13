@@ -339,7 +339,7 @@ public class JavascriptBridge {
 	}
 	/**
 	 * 获取地理信息，（同步阻塞）
-	 * return string (longitude 精度，latitude维度，altitude海拔,accuracy精度)
+	 * return string (longitude 精度，latitude维度，altitude海拔,accuracy精度。。省，市，区。。。)
 	 */
 	@JavascriptInterface
 	public String getLocation(){
@@ -352,8 +352,8 @@ public class JavascriptBridge {
 		
 		String json = loc==null?"":"{\"longitude\":"+loc.getLongitude()+ //经度
 				";\"latitude\":"+loc.getLatitude()+				//维度
-				";\"altitude\":"+loc.getAltitude()+				//获取高度信息，目前没有实现
-				";\"radius\":"+loc.getRadius()+					//定位精度
+				//";\"altitude\":"+loc.getAltitude()+				//获取高度信息，目前没有实现
+				";\"accuracy\":"+loc.getRadius()+				//定位精度
 				";\"direction\":"+loc.getDirection()+			//获取手机当前的方向
 				";\"province\":"+loc.getProvince()+				//省份
 				";\"citycode\":"+loc.getCityCode()+
