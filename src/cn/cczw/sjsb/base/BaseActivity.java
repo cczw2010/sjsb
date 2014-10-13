@@ -35,6 +35,14 @@ public class BaseActivity extends Activity {
 	private OnRefreshListener swipeListener;
 	//protected HashMap<String,String> loadFns = null;	//页面加载完毕后执行（完后删除）的回调函数(key),参数字符串（val）
 	public static String EXITAPP_MESSAGE = "exitapp";   //退出程序的标示
+	//临时文件
+	public static String JS_CAMERA_JPG = null;	//相机照的临时文件
+	final public static String JS_SNAPSHOT_JPG = "snapshot_js.jpg";//快照临时文件
+	//js回调函数
+	public String JS_CAMERA_CALLBACK = null;		//相机回调
+	public String JS_MENUBTN_CALLBACK = null;	//菜单键回调
+	public String JS_BACKBTN_CALLBACK = null;	//返回按钮回调
+	public String JS_SWIPEREFRESH_CALLBACK = null;	//下拉刷新时的回调
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -55,9 +63,9 @@ public class BaseActivity extends Activity {
 	}
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		//Log.d("SJSB",Constants.JS_MENUBTN_CALLBACK+"==JS_MENUBTN_CALLBACK");
-		if(Constants.JS_MENUBTN_CALLBACK!=null && Constants.JS_MENUBTN_CALLBACK!=""){
-			runjs(Constants.JS_MENUBTN_CALLBACK+"()");
+		//Log.d("SJSB",this.JS_MENUBTN_CALLBACK+"==JS_MENUBTN_CALLBACK");
+		if(swebview!=null && this.JS_MENUBTN_CALLBACK!=null && this.JS_MENUBTN_CALLBACK!=""){
+			runjs(this.JS_MENUBTN_CALLBACK+"()");
 			return false;
 		}else{
 			return super.onPrepareOptionsMenu(menu);
@@ -65,8 +73,8 @@ public class BaseActivity extends Activity {
 	}
 	@Override
 	public void onBackPressed() {
-		if(Constants.JS_BACKBTN_CALLBACK!=null && Constants.JS_BACKBTN_CALLBACK!=""){
-			runjs(Constants.JS_BACKBTN_CALLBACK+"()");
+		if(swebview!=null && this.JS_BACKBTN_CALLBACK!=null && this.JS_BACKBTN_CALLBACK!=""){
+			runjs(this.JS_BACKBTN_CALLBACK+"()");
 		}else{
 	 		super.onBackPressed();
 		}
@@ -198,7 +206,7 @@ public class BaseActivity extends Activity {
 	    		if(resultCode == RESULT_OK){
 			    	Bundle bundle=data.getExtras();  //data为B中回传的Intent
 			    	Bitmap bitmap = (Bitmap) bundle.get("data");
-			    	_data = app.saveFileToSdcard(bitmap,Constants.JS_CAMERA_JPG,100);
+			    	_data = app.saveFileToSdcard(bitmap,JS_CAMERA_JPG,100);
 			    	if(_data!=null && _data!=""){
 			    		_data = "file://"+_data;
 			    	}
@@ -206,7 +214,7 @@ public class BaseActivity extends Activity {
 	    		break;
 	    	case Constants.JS_REQUEST_CODE_CAMERA:   //js相机原图
 	    		if(resultCode == RESULT_OK){
-	    			_data =app.getAppFilePath()+File.separator+Constants.JS_CAMERA_JPG;
+	    			_data =app.getAppFilePath()+File.separator+JS_CAMERA_JPG;
 	    			if(_data!=null && _data!=""){
 			    		_data = "file://"+_data;
 			    	}
@@ -220,7 +228,7 @@ public class BaseActivity extends Activity {
 	    	default:
 	    		break;
     	}
-    	final String callback =Constants.JS_CAMERA_CALLBACK;
+    	final String callback =this.JS_CAMERA_CALLBACK;
     	final String result = _data==null?"":_data;
 		Log.d("SJSB",callback+":"+result);
 		//执行callback

@@ -32,7 +32,7 @@ import com.google.gson.Gson;
 public class JavascriptBridge {
 	public WebView swebview = null;
 	public Context appcontext = null;
-	public Activity activitycontent = null;
+	public BaseActivity activitycontent = null;
 	public ProgressDialog webviewspd = null;
 	public MyApplication myapp =null;
 	public AppReciver myreciver =null;
@@ -46,7 +46,7 @@ public class JavascriptBridge {
 	public JavascriptBridge(WebView webview,Context context,Activity activity){
 		swebview = webview;
 		appcontext =  context;
-		activitycontent = activity;
+		activitycontent = (BaseActivity)activity;
 		myapp = (MyApplication) MyApplication.getInstance();
 		myreciver = AppReciver.getInstance();
 		commapi = CommonApi.getInstance();
@@ -80,7 +80,7 @@ public class JavascriptBridge {
 	 */
 	@JavascriptInterface
 	public void setMenuBtnFn(String callback){
-		Constants.JS_MENUBTN_CALLBACK = callback;
+		activitycontent.JS_MENUBTN_CALLBACK = callback;
 	}
 	/**
 	 * 设置当返回键按下时的js回调函数，如果为空则执行系统的原生操作
@@ -88,7 +88,7 @@ public class JavascriptBridge {
 	 */
 	@JavascriptInterface
 	public void setBackBtnFn(String callback){
-		Constants.JS_BACKBTN_CALLBACK = callback;
+		activitycontent.JS_BACKBTN_CALLBACK = callback;
 	}
 	/**
 	 * 设置当前页下拉刷新是否可用
@@ -96,14 +96,14 @@ public class JavascriptBridge {
 	 */
 	@JavascriptInterface
 	public void disSwipeRefresh(){
-		((BaseActivity) activitycontent).sendmessage(Constants.MESSAGE_REFRESHDISABLE, null,null);
+		activitycontent.sendmessage(Constants.MESSAGE_REFRESHDISABLE, null,null);
 	}
 	/**
 	 * 退出应用
 	 */
 	@JavascriptInterface
 	public void exitApp(){
-		((BaseActivity) activitycontent).exitApp();
+		activitycontent.exitApp();
 	}
 	/**
 	 *  显示loading
@@ -292,7 +292,7 @@ public class JavascriptBridge {
 	@JavascriptInterface
 	public String getSnapshot(int quantity){
 		Bitmap bitmap = commapi.shotView(swebview);
-		String result = myapp.saveFileToSdcard(bitmap,Constants.JS_SNAPSHOT_JPG,60);
+		String result = myapp.saveFileToSdcard(bitmap,BaseActivity.JS_SNAPSHOT_JPG,60);
 		//Log.d("SJSB",result);
 		if(result!=null && result!=""){
 			result = "file://"+result;
@@ -308,16 +308,16 @@ public class JavascriptBridge {
 	@JavascriptInterface
 	public void camera(int type,int save,String callback){
 		//将callback注册到webview上
-		Constants.JS_CAMERA_CALLBACK = callback;
+		activitycontent.JS_CAMERA_CALLBACK = callback;
 		
 		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 		if(save==1){
-			Constants.JS_CAMERA_JPG = "camera_"+System.currentTimeMillis()+".jpg";
+			BaseActivity.JS_CAMERA_JPG = "camera_"+System.currentTimeMillis()+".jpg";
 		}else{
-			Constants.JS_CAMERA_JPG = "camera_tmp.jpg";
+			BaseActivity.JS_CAMERA_JPG = "camera_tmp.jpg";
 		}
 		if(type==0){
-			Uri uri = Uri.fromFile(new File(myapp.getAppFilePath(),Constants.JS_CAMERA_JPG));
+			Uri uri = Uri.fromFile(new File(myapp.getAppFilePath(),BaseActivity.JS_CAMERA_JPG));
 			intent.putExtra(MediaStore.EXTRA_OUTPUT,uri);// 如果设置了这个将直接将图片保存为路径，否则将只返回一个Bitmap缩略图给activitycontent
 	        activitycontent.startActivityForResult(intent,Constants.JS_REQUEST_CODE_CAMERA);
 		}else{
@@ -329,7 +329,7 @@ public class JavascriptBridge {
 	@JavascriptInterface
 	public void qrcodeCamera(String callback){
 		//将callback注册到webview上
-  		Constants.JS_CAMERA_CALLBACK = callback;
+		activitycontent.JS_CAMERA_CALLBACK = callback;
   		
 		Intent intent = new Intent();  
         intent.setClass(activitycontent, CaptureActivity.class);  
