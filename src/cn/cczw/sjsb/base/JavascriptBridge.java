@@ -9,7 +9,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.location.Location;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -27,6 +26,7 @@ import cn.cczw.comm.VibratorApi;
 import cn.cczw.util.DataCleanManager;
 import cn.hugo.android.scanner.CaptureActivity;
 
+import com.baidu.location.BDLocation;
 import com.google.gson.Gson;
 
 public class JavascriptBridge {
@@ -338,13 +338,33 @@ public class JavascriptBridge {
        
 	}
 	/**
-	 * 获取gps
+	 * 获取地理信息，（同步阻塞）
+	 * return string (longitude 精度，latitude维度，altitude海拔,accuracy精度)
 	 */
 	@JavascriptInterface
-	public String getGps(){
-
-		Location loc = GpsApi.getInstance().getLastLocation();
-		return loc==null?"":"{\"longitude\":"+loc.getLongitude()+";\"latitude\":"+loc.getLatitude()+",\"acc\":"+loc.getAccuracy()+"}";
+	public String getLocation(){
+		GpsApi.getInstance().start();
+		BDLocation loc = null;
+		while(loc==null){
+			loc = GpsApi.getInstance().getLocation();
+		}
+		GpsApi.getInstance().stop();
+		
+		String json = loc==null?"":"{\"longitude\":"+loc.getLongitude()+ //经度
+				";\"latitude\":"+loc.getLatitude()+				//维度
+				";\"altitude\":"+loc.getAltitude()+				//获取高度信息，目前没有实现
+				";\"radius\":"+loc.getRadius()+					//定位精度
+				";\"direction\":"+loc.getDirection()+			//获取手机当前的方向
+				";\"province\":"+loc.getProvince()+				//省份
+				";\"citycode\":"+loc.getCityCode()+
+				";\"city\":"+loc.getCity()+						//获取城市
+				";\"district\":"+loc.getDistrict()+				//获取区/县信息
+				";\"street\":"+loc.getStreet()+					//街道信息
+				";\"streetNumber\":"+loc.getStreetNumber()+
+				";\"addr\":"+loc.getAddrStr()+					//获取详细地址信息
+				"}";
+		Log.d("sjsb",">>"+json);
+		return json;
 	}
 	/**
 	 * 开始震动  
