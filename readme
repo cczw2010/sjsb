@@ -1,0 +1,3 @@
+v1.1 增加百度地图定位sdk v4.2
+	个人开发需要修改 AndroidManifest.xml中的AcessKey 具体请参考开发文档。
+	

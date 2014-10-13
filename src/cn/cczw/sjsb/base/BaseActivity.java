@@ -55,7 +55,7 @@ public class BaseActivity extends Activity {
 	}
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		Log.d("SJSB",Constants.JS_MENUBTN_CALLBACK+"==JS_MENUBTN_CALLBACK");
+		//Log.d("SJSB",Constants.JS_MENUBTN_CALLBACK+"==JS_MENUBTN_CALLBACK");
 		if(Constants.JS_MENUBTN_CALLBACK!=null && Constants.JS_MENUBTN_CALLBACK!=""){
 			runjs(Constants.JS_MENUBTN_CALLBACK+"()");
 			return false;

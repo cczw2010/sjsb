@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="cn.cczw.sjsb"
-      android:versionCode="1"
-      android:versionName="1.0">
+      android:versionCode="2"
+      android:versionName="1.1">
   	<uses-sdk android:minSdkVersion="8" android:targetSdkVersion="19"/>
     <application android:icon="@drawable/icon" 
         android:label="@string/app_name" 
@@ -10,7 +10,19 @@
         android:theme="@android:style/Theme.NoTitleBar"
         android:allowBackup="true"
  		android:hardwareAccelerated="true">
-
+		<!-- 百度Android定位SDK -->
+		<service
+            android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:process=":remote" >
+            <intent-filter>
+                <action android:name="com.baidu.location.service_v2.2" ></action>
+            </intent-filter>
+        </service>
+        <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="wnG7TL4yUhKhV9p8tiU4fDip" />
+        
         <activity android:name="MainActivity"
                   android:label="@string/app_name">
             <intent-filter android:priority="1000">
@@ -46,13 +58,15 @@
 			android:name="com.renren.api.connect.android.AuthorizationHelper$BlockActivity"
 			android:theme="@android:style/Theme.Dialog">
 		</activity>
-		
+
     </application>
     <!-- 在SDCard中创建与删除文件权限 -->
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <!-- 往SDCard写入数据权限 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    
+    <!--允许应用读取低级别的系统日志文件 -->
+	<uses-permission android:name="android.permission.READ_LOGS" />
+	
     <uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.RESTART_PACKAGES" />
@@ -63,9 +77,12 @@
  	
     <!-- 地理信息定位 -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- 通过网络来获取 -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <!-- 粗略定位授权 -->
-	<uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
+    <!-- 允许应用程序访问额外的位置提供命令 -->
+    <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+    <!-- 允许程序创建模拟位置提供用于测试 -->
+    <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
     
     <!-- 相机-->
 	<uses-permission android:name = "android.permission.CAMERA" /> 

@@ -93,7 +93,8 @@
 		<button id="qrcodecamera">扫描二维码</button><textarea name="" id="" cols="30" rows="4">这里是扫描结果</textarea>
 	</li>
 	<li>
-		<button id="getgps">获取地理信息</button>
+		<button id="getlocation">获取地理信息net</button><textarea name="" id="" cols="30" rows="7" >这里是地理信息结果</textarea>
+	</li>
 	</li>
 	<li>
 		<button id="vibrator">震动不循环</button>
@@ -123,12 +124,12 @@
 		var o = e.target;
 		switch(o.id){
 			case 'toast':
-				SJSB.toast('ok',4,1);
+				SJSB.toast('ok',4,0);
 			break;
 			case 'webwh':
 				var w = SJSB.getWebWidth(),
 					h = SJSB.getWebHeight();
-				SJSB.toast(w+':'+h,0,1);
+				SJSB.toast(w+':'+h,0,0);
 			break;
 			case 'progress':
 				SJSB.showProgress('正在加载中，小伙别着急');
@@ -143,10 +144,10 @@
 				alert(SJSB.getAppVersion());
 				break;
 			case 'online':
-				SJSB.toast(SJSB.onLine(),0,1);
+				SJSB.toast(SJSB.onLine(),0,0);
 				break;
 			case 'nettype':
-				SJSB.toast(SJSB.netType(),0,1);
+				SJSB.toast(SJSB.netType(),0,0);
 				break;
 			
 			case 'paths':
@@ -198,8 +199,8 @@
 			case "appcounter":
 				SJSB.toast(SJSB.getAppCounter(),0,0);
 				break;
-			case "getgps":
-				SJSB.toast(SJSB.getGps(),0,0);
+			case "getlocation":
+				o.nextSibling.value = SJSB.getLocation()
 				break;
 			case "vibratorstop":
 				SJSB.stopVibrator();
