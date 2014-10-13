@@ -91,8 +91,7 @@ public class JavascriptBridge {
 		activitycontent.JS_BACKBTN_CALLBACK = callback;
 	}
 	/**
-	 * 设置当前页下拉刷新是否可用
-	 * @param can   1 可用 0，不可用
+	 * 设置当前页下拉刷新为不可用
 	 */
 	@JavascriptInterface
 	public void disSwipeRefresh(){
@@ -286,7 +285,7 @@ public class JavascriptBridge {
 	/**
 	 * 获取webview截屏
 	 * @param int quantity 质量 0~100
-	 * return String 缓存base64
+	 * return String 本地文件路径（注意缓存）
 	 */
 	@SuppressLint("NewApi")
 	@JavascriptInterface
