@@ -81,7 +81,6 @@ public class BaseActivity extends Activity {
 	}
 	
 	/* ----------------------- web --------------------------- */
-	// 初始化webview,context为当前activity上下文  即.Activity.this
 	@SuppressLint("SetJavaScriptEnabled")
 	@SuppressWarnings("deprecation")
 	public void initWebView(int webviewid,String url,boolean hasSwipeRefresh) {
