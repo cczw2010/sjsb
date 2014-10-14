@@ -143,7 +143,7 @@ public class BaseActivity extends Activity {
 //		swebview.setFocusable(true);
 		swebview.setSelected(false);
 		swebview.setSaveEnabled(false);//系统回收时，不保留webview内容,必须，防止addJavascriptInterface出问题
-		swebview.setWebChromeClient(new chromeClient());
+		swebview.setWebChromeClient(new MyChromeClient());
 		swebview.setWebViewClient(new webviewClient());
 		
 		swebview.addJavascriptInterface(new JavascriptBridge(swebview,getApplicationContext(),this), Constants.JS_BridgeName);//注入js		
@@ -155,11 +155,20 @@ public class BaseActivity extends Activity {
 	class webviewClient extends WebViewClient{
  		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
-			//Log.d("SJSB", "shouldOverrideUrlLoading url=" + url);
-			//Uri uri = Uri.parse(url); // url为你要链接的地址
-			//view.loadUrl(url);
             return super.shouldOverrideUrlLoading(view, url);
 		}
+ 		
+ 		@Override
+ 		public void onReceivedError(WebView view, int errorCode,
+ 				String description, String failingUrl) {
+ 			Log.d("sjsb","errorCode="+errorCode+";description="+description);
+ 			//如果带下拉刷新，清空动画
+			if(mSwipeLayout!=null){
+				mSwipeLayout.setRefreshing(false);
+			}
+			//用javascript隐藏系统定义的404页面信息 ，不用一个页面来代替，是因为那样的话再刷新就是错误页了不是原来的页了
+ 		    view.loadUrl("javascript:document.body.innerHTML=\""+Constants.HTML_ERRPAGE+"\"");
+ 		}
 		@Override
 		public void onPageFinished(WebView view, String url) {
 			//Log.d("sjsb","load finished");
@@ -178,27 +187,12 @@ public class BaseActivity extends Activity {
 			super.onLoadResource(view, url);
 		}
 	}
-	class chromeClient extends MyChromeClient{
-		@Override
-		public void onProgressChanged(WebView view, int newProgress) {
-			//Log.d("SJSB", "onProgressChanged newProgress:>"+newProgress);
-			//if(newProgress==100){
-		    //    Set<String> key = loadFns.keySet();
-		    //    for (Iterator<String> it = key.iterator();it.hasNext();) {
-			//		String fn = it.next();
-			//		runjs(fn+"('"+loadFns.get(fn)+"')");
-			//	}
-		    //    loadFns.clear();
-			//}
-			super.onProgressChanged(view, newProgress);
-		}
-	}
 	/**
 	 *onActivityResult回调部分（例如js相机）
 	 */
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		Log.d("SJSB","onActivityResult====requestCode："+requestCode+">>resultCode："+resultCode);
+		//Log.d("SJSB","onActivityResult====requestCode："+requestCode+">>resultCode："+resultCode);
 		String _data =  null;
     	switch (requestCode) {
 	    	case Constants.JS_REQUEST_CODE_CAMERA_CAPTURE: //js相机缩略图
@@ -229,7 +223,7 @@ public class BaseActivity extends Activity {
     	}
     	final String callback =this.JS_CAMERA_CALLBACK;
     	final String result = _data==null?"":_data;
-		Log.d("SJSB",callback+":"+result);
+		//Log.d("SJSB",callback+":"+result);
 		//执行callback
 		if(callback!=null && ""!=callback){
 			//sdk19 以后onActivityResult返回当前页后会刷新,所以如果此处要执行js,

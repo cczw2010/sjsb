@@ -13,10 +13,24 @@ import android.webkit.WebView;
 import android.widget.EditText;
 
 public class MyChromeClient extends WebChromeClient{
+	//不能注销本处的重写，否则会影响404等错误页面的重构
 	@Override
 	public void onConsoleMessage(String message, int lineNumber,
 			String sourceID) {
 		Log.d("SJSB", "source="+sourceID+"\n\t--->linenumber=" + lineNumber + "\n\t--->message="+ message);
+	}
+	@Override
+	public void onProgressChanged(WebView view, int newProgress) {
+		//Log.d("SJSB", "onProgressChanged newProgress:>"+newProgress);
+		//if(newProgress==100){
+	    //    Set<String> key = loadFns.keySet();
+	    //    for (Iterator<String> it = key.iterator();it.hasNext();) {
+		//		String fn = it.next();
+		//		runjs(fn+"('"+loadFns.get(fn)+"')");
+		//	}
+	    //    loadFns.clear();
+		//}
+		super.onProgressChanged(view, newProgress);
 	}
 	// 处理提示事件 
 	@Override 

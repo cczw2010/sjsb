@@ -128,6 +128,22 @@
 		*/
 		SJSB.getSnapshot(quantity);
 
+####重载部分
+
+* window的alert方法，去除了url显示
+
+		alert(message);
+
+
+* window的confirm方法，去除了url显示
+
+		confirm(message);
+
+
+* window的prompt方法
+
+		prompt(message);
+	
 ####应用变量处理
 
  `这些变量与网页无关，将在整个应用中一直保存，不管退出与否.另外不建议在此处存储大数据`
