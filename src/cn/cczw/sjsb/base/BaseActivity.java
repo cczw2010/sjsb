@@ -58,7 +58,7 @@ public class BaseActivity extends Activity {
 		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE); //防止input被键盘挡住，缩放
 		
 		app = (MyApplication) MyApplication.getInstance();
-		//shandler = new BaseHandler();
+		shandler = new BaseHandler();
 
 		//处理退出消息
 		Intent intent = getIntent();
@@ -196,6 +196,7 @@ public class BaseActivity extends Activity {
 				mSwipeLayout.setRefreshing(false);
 			}
 			super.onPageFinished(view, url);
+			//Dialogs.getShareDialog(BaseActivity.this, "asdasdasdasd").show();
 		}
 		@Override
 		public void onPageStarted(WebView view, String url, Bitmap favicon) {
@@ -262,21 +263,21 @@ public class BaseActivity extends Activity {
 	 * @author awen
 	 *
 	 */
-	//class BaseHandler extends Handler{
-	//	@Override
-	//	public void handleMessage(Message msg) {
-	//		//Log.d("sjsb-msg",msg.toString());
-	//		Bundle bundle = msg.getData();
-	//		switch (msg.what) {
-	//		case MESSAGE_REFRESHDISABLE:
-	//			//设置下拉刷新不可用
-	//			mSwipeLayout.setEnabled(false);
-	//			break;
-	//		default:
-	//			break;
-	//		}
-	//	}
-	//}
+	class BaseHandler extends Handler{
+		@Override
+		public void handleMessage(Message msg) {
+			//Log.d("sjsb-msg",msg.toString());
+			Bundle bundle = msg.getData();
+			switch (msg.what) {
+			case MESSAGE_REFRESHDISABLE:
+				//设置下拉刷新不可用
+				mSwipeLayout.setEnabled(false);
+				break;
+			default:
+				break;
+			}
+		}
+	}
 	// 发送消息
 	public void sendmessage(int message,String fn, String param) {
 		Message msg = shandler.obtainMessage(message);

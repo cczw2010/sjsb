@@ -1,51 +1,26 @@
 package cn.cczw.sjsb;
 
-import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
 import cn.cczw.sjsb.base.BaseActivity;
 
 public class MainActivity extends BaseActivity {
-	Button btn1 = null;
-	Button btn2 = null;
-	OnClickListener btnclick =null;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
-		
-		
-		btnclick = new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent();
-				switch(v.getId()){
-				case R.id.button1:
-					intent.setClass(MainActivity.this, SJSBTestActivity.class);
-					break;
-				}			
-				startActivity(intent);
-			}
-		};
+		setContentView(R.layout.webview_swiperefresh);
 		
 		initView();
-		initEvent();
-		
-		
 	}
 	
-	@SuppressLint("InlinedApi")
 	public void initView(){
-		btn1 = (Button) findViewById(R.id.button1);
-//		btn2 = (Button) findViewById(R.id.button2);
+		
+		
+		
+		long t = System.currentTimeMillis(); 
+//		String url = "http://www.baidu.com";
+//		String url = "http://10.2.5.119/test.html?t="+t;
+//		initWebView(R.id.webview,url,Test_SJSB.this,true);
+		initWebView(R.id.webview,"file:///android_asset/template.html?v="+t,true);
 	}
-	
-	public void initEvent(){
-		btn1.setOnClickListener(btnclick);
-//		btn2.setOnClickListener(btnclick);
-	}
-	
 }
