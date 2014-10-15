@@ -95,7 +95,7 @@ public class JavascriptBridge {
 	 */
 	@JavascriptInterface
 	public void disSwipeRefresh(){
-		activitycontent.sendmessage(Constants.MESSAGE_REFRESHDISABLE, null,null);
+		activitycontent.sendmessage(BaseActivity.MESSAGE_REFRESHDISABLE, null,null);
 	}
 	/**
 	 * 退出应用
@@ -112,8 +112,8 @@ public class JavascriptBridge {
 	public void showProgress(String str) {
 		if(webviewspd==null){
 			webviewspd = new ProgressDialog(activitycontent,ProgressDialog.STYLE_SPINNER);
-			if(str == null || str.length() <= 0){
-				str = Constants.TEXT_PROGRESS;
+			if(str == null){
+				str = "";
 			}
 			webviewspd.setMessage(str);
 		}
@@ -318,9 +318,9 @@ public class JavascriptBridge {
 		if(type==0){
 			Uri uri = Uri.fromFile(new File(myapp.getAppFilePath(),BaseActivity.JS_CAMERA_JPG));
 			intent.putExtra(MediaStore.EXTRA_OUTPUT,uri);// 如果设置了这个将直接将图片保存为路径，否则将只返回一个Bitmap缩略图给activitycontent
-	        activitycontent.startActivityForResult(intent,Constants.JS_REQUEST_CODE_CAMERA);
+	        activitycontent.startActivityForResult(intent,BaseActivity.JS_REQUEST_CODE_CAMERA);
 		}else{
-	        activitycontent.startActivityForResult(intent,Constants.JS_REQUEST_CODE_CAMERA_CAPTURE);
+	        activitycontent.startActivityForResult(intent,BaseActivity.JS_REQUEST_CODE_CAMERA_CAPTURE);
 		}
 	}
 	
@@ -333,7 +333,7 @@ public class JavascriptBridge {
 		Intent intent = new Intent();  
         intent.setClass(activitycontent, CaptureActivity.class);  
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);  
-        activitycontent.startActivityForResult(intent, Constants.JS_SCANNING_REQUEST_CODE);
+        activitycontent.startActivityForResult(intent, BaseActivity.JS_SCANNING_REQUEST_CODE);
        
 	}
 	/**
@@ -362,7 +362,7 @@ public class JavascriptBridge {
 				";\"streetNumber\":"+loc.getStreetNumber()+
 				";\"addr\":"+loc.getAddrStr()+					//获取详细地址信息
 				"}";
-		Log.d("sjsb",">>"+json);
+		//Log.d("sjsb",">>"+json);
 		return json;
 	}
 	/**

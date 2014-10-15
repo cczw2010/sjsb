@@ -1,6 +1,11 @@
 <resources>
-
+    <!--应用常量-->
+    
     <string name="app_name">SJSB</string>
+    <!-- 页面加载错误时的页面 -->
+    <string name="jsclassname">SJSB</string>
+    
+    <!--二维码扫描-->
     <string name="placeHolder">placeHolder</string>
     <string name="seekbar_add">+</string>
     <string name="seekbar_minus">-</string>

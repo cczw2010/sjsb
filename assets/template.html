@@ -52,7 +52,10 @@
 						<button id="nettype">网络类型</button>
 				</li>
 				<li>
-						<button id="loaderror">加载一个不存在的页面试试</button>
+						<button id="loaderror">加载一个不存在的本地页面试试</button>
+				</li>
+				<li>
+						<button id="loadurl">加载http链接</button>
 				</li>
 				<li>
 						<button id="prop">设置获取应用变量</button>
@@ -139,6 +142,9 @@
 				break;
 			case 'loaderror':
 				location.href="file:///test.html";
+				break;
+			case 'loadurl':
+				location.href="http://www.baidu.com";
 				break;
 			case 'paths':
 				var cache = SJSB.getCachePath();

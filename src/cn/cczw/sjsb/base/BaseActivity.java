@@ -33,8 +33,15 @@ public class BaseActivity extends Activity {
 	private Handler shandler = null;
 	private SwipeRefreshLayout mSwipeLayout;
 	private OnRefreshListener swipeListener;
-	//protected HashMap<String,String> loadFns = null;	//页面加载完毕后执行（完后删除）的回调函数(key),参数字符串（val）
 	public static String EXITAPP_MESSAGE = "exitapp";   //退出程序的标示
+	public static String PAGE_ERROR = "file:///android_asset/error.html";   //加载本地页面错误显示页
+	/*js request_code部分*/
+	final public static int JS_REQUEST_CODE_CAMERA = 930001;		//js相机原图 request_code
+	final public static int JS_REQUEST_CODE_CAMERA_CAPTURE = 930002;//js相机缩略图 request_code
+    final public static int JS_SCANNING_REQUEST_CODE = 930003;   	//js扫二维码 request_code
+    /*message部分*/
+    final public static int MESSAGE_REFRESHDISABLE = 1000;   //下拉刷新是否可用
+    
 	//临时文件
 	public static String JS_CAMERA_JPG = null;	//相机照的临时文件
 	final public static String JS_SNAPSHOT_JPG = "snapshot_js.jpg";//快照临时文件
@@ -52,8 +59,7 @@ public class BaseActivity extends Activity {
 		
 		app = (MyApplication) MyApplication.getInstance();
 		//shandler = new BaseHandler();
-		//loadFns = new HashMap<String, String>();
-		
+
 		//处理退出消息
 		Intent intent = getIntent();
 		String msg = intent.getStringExtra("data");
@@ -64,8 +70,8 @@ public class BaseActivity extends Activity {
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		//Log.d("SJSB",this.JS_MENUBTN_CALLBACK+"==JS_MENUBTN_CALLBACK");
-		if(swebview!=null && this.JS_MENUBTN_CALLBACK!=null && this.JS_MENUBTN_CALLBACK!=""){
-			runjs(this.JS_MENUBTN_CALLBACK+"()");
+		if(swebview!=null && JS_MENUBTN_CALLBACK!=null && JS_MENUBTN_CALLBACK!="" && !PAGE_ERROR.equals(swebview.getUrl())){
+			runjs(JS_MENUBTN_CALLBACK+"()");
 			return false;
 		}else{
 			return super.onPrepareOptionsMenu(menu);
@@ -73,10 +79,12 @@ public class BaseActivity extends Activity {
 	}
 	@Override
 	public void onBackPressed() {
-		if(swebview!=null && this.JS_BACKBTN_CALLBACK!=null && this.JS_BACKBTN_CALLBACK!=""){
-			runjs(this.JS_BACKBTN_CALLBACK+"()");
+		if(swebview!=null && JS_BACKBTN_CALLBACK!=null && JS_BACKBTN_CALLBACK!="" && !PAGE_ERROR.equals(swebview.getUrl())){
+			runjs(JS_BACKBTN_CALLBACK+"()");
+		}else if(swebview.canGoBack()){
+			swebview.goBack();
 		}else{
-	 		super.onBackPressed();
+			super.onBackPressed();
 		}
 	}
 	
@@ -145,33 +153,44 @@ public class BaseActivity extends Activity {
 		swebview.setSaveEnabled(false);//系统回收时，不保留webview内容,必须，防止addJavascriptInterface出问题
 		swebview.setWebChromeClient(new MyChromeClient());
 		swebview.setWebViewClient(new webviewClient());
-		
-		swebview.addJavascriptInterface(new JavascriptBridge(swebview,getApplicationContext(),this), Constants.JS_BridgeName);//注入js		
+		swebview.addJavascriptInterface(new JavascriptBridge(swebview,getApplicationContext(),this), getString(R.string.jsclassname));//注入js		
 		// swebview.setLongClickable(false);
 		// swebview.cancelLongPress(); //奇怪，这个设置后 有时候轻点击也不管用了
 		swebview.loadUrl((url).trim());
-		
 	}
+
+	
 	class webviewClient extends WebViewClient{
  		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            return super.shouldOverrideUrlLoading(view, url);
+ 			Log.d("sjsb", "shouldOverrideUrlLoading:"+url);
+ 			
+ 			//file的话提前判断，不存在报错拦截，不走加载环节，因为用浏览器自己的加载环节各个版本的报错加载错误方式不一样不好处理
+ 			if(url.startsWith("file")){
+ 				File f = new File(url);
+	 			//Log.d("sjsb","文件不存在"+f.exists());
+ 				if(!f.exists()){
+ 					//文件不存在
+ 					view.loadUrl(PAGE_ERROR);
+ 					return true;
+ 				}
+ 			}
+           return super.shouldOverrideUrlLoading(view, url);
 		}
  		
  		@Override
  		public void onReceivedError(WebView view, int errorCode,
  				String description, String failingUrl) {
- 			Log.d("sjsb","errorCode="+errorCode+";description="+description);
+			Log.d("sjsb","onReceivedError:"+failingUrl+":errorCode="+errorCode+";description="+description);
  			//如果带下拉刷新，清空动画
 			if(mSwipeLayout!=null){
 				mSwipeLayout.setRefreshing(false);
 			}
-			//用javascript隐藏系统定义的404页面信息 ，不用一个页面来代替，是因为那样的话再刷新就是错误页了不是原来的页了
- 		    view.loadUrl("javascript:document.body.innerHTML=\""+Constants.HTML_ERRPAGE+"\"");
+			super.onReceivedError(view, errorCode, description, failingUrl);
  		}
 		@Override
 		public void onPageFinished(WebView view, String url) {
-			//Log.d("sjsb","load finished");
+			//Log.d("sjsb","onPageFinished>参数url:"+url+";当前url:"+swebview.getUrl());
 			//如果带下拉刷新，清空动画
 			if(mSwipeLayout!=null){
 				mSwipeLayout.setRefreshing(false);
@@ -180,10 +199,12 @@ public class BaseActivity extends Activity {
 		}
 		@Override
 		public void onPageStarted(WebView view, String url, Bitmap favicon) {
+			//Log.d("sjsb","onPageStarted:"+url);
 			super.onPageStarted(view, url, favicon);
 		}
 		@Override
 		public void onLoadResource(WebView view, String url) {
+			//Log.d("sjsb","onLoadResource:"+url);
 			super.onLoadResource(view, url);
 		}
 	}
@@ -195,7 +216,7 @@ public class BaseActivity extends Activity {
 		//Log.d("SJSB","onActivityResult====requestCode："+requestCode+">>resultCode："+resultCode);
 		String _data =  null;
     	switch (requestCode) {
-	    	case Constants.JS_REQUEST_CODE_CAMERA_CAPTURE: //js相机缩略图
+	    	case JS_REQUEST_CODE_CAMERA_CAPTURE: //js相机缩略图
 	    		if(resultCode == RESULT_OK){
 			    	Bundle bundle=data.getExtras();  //data为B中回传的Intent
 			    	Bitmap bitmap = (Bitmap) bundle.get("data");
@@ -205,7 +226,7 @@ public class BaseActivity extends Activity {
 			    	}
 	    		}
 	    		break;
-	    	case Constants.JS_REQUEST_CODE_CAMERA:   //js相机原图
+	    	case JS_REQUEST_CODE_CAMERA:   //js相机原图
 	    		if(resultCode == RESULT_OK){
 	    			_data =app.getAppFilePath()+File.separator+JS_CAMERA_JPG;
 	    			if(_data!=null && _data!=""){
@@ -213,7 +234,7 @@ public class BaseActivity extends Activity {
 			    	}
 	    		}
 	    		break;
-	    	case Constants.JS_SCANNING_REQUEST_CODE:   //二维码扫描
+	    	case JS_SCANNING_REQUEST_CODE:   //二维码扫描
 	    		if(resultCode == RESULT_OK){
 	    			_data = data.getStringExtra("data");
 	    		}
@@ -247,7 +268,7 @@ public class BaseActivity extends Activity {
 	//		//Log.d("sjsb-msg",msg.toString());
 	//		Bundle bundle = msg.getData();
 	//		switch (msg.what) {
-	//		case Constants.MESSAGE_REFRESHDISABLE:
+	//		case MESSAGE_REFRESHDISABLE:
 	//			//设置下拉刷新不可用
 	//			mSwipeLayout.setEnabled(false);
 	//			break;

@@ -13,7 +13,6 @@ import android.webkit.WebView;
 import android.widget.EditText;
 
 public class MyChromeClient extends WebChromeClient{
-	//不能注销本处的重写，否则会影响404等错误页面的重构
 	@Override
 	public void onConsoleMessage(String message, int lineNumber,
 			String sourceID) {
@@ -21,7 +20,7 @@ public class MyChromeClient extends WebChromeClient{
 	}
 	@Override
 	public void onProgressChanged(WebView view, int newProgress) {
-		//Log.d("SJSB", "onProgressChanged newProgress:>"+newProgress);
+		//Log.d("SJSB", "onProgressChanged:"+newProgress+";当前url:"+view.getUrl());
 		//if(newProgress==100){
 	    //    Set<String> key = loadFns.keySet();
 	    //    for (Iterator<String> it = key.iterator();it.hasNext();) {
