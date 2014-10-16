@@ -19,11 +19,12 @@
                 <action android:name="com.baidu.location.service_v2.2" ></action>
             </intent-filter>
         </service>
+        <!-- 百度Android定位AccessKey -->
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="wnG7TL4yUhKhV9p8tiU4fDip" />
         
-        <activity android:name="MainActivity"
+        <activity android:name="MainActivity" android:launchMode="singleTask"
                   android:label="@string/app_name">
             <intent-filter android:priority="1000">
                 <action android:name="android.intent.action.MAIN" />
@@ -31,6 +32,8 @@
 				<!--<data android:mimeType="image/*" />  //可监听图片打开-->
             </intent-filter>
         </activity>
+        <!-- 自定义页面 -->
+        <activity android:name="InflaterActivity" ></activity>
         <!-- swiperefresh -->
         <activity android:name="SwipeRefreshActivity" ></activity>
         <!-- qrcode -->

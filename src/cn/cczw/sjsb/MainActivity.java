@@ -14,13 +14,7 @@ public class MainActivity extends BaseActivity {
 	}
 	
 	public void initView(){
-		
-		
-		
 		long t = System.currentTimeMillis(); 
-//		String url = "http://www.baidu.com";
-//		String url = "http://10.2.5.119/test.html?t="+t;
-//		initWebView(R.id.webview,url,Test_SJSB.this,true);
-		initWebView(R.id.webview,"file:///android_asset/template.html?v="+t,true);
+		initWebView(R.id.webview,"file:///android_asset/index.html?v="+t,true);
 	}
 }

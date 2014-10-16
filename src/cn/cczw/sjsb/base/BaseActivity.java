@@ -59,9 +59,11 @@ public class BaseActivity extends Activity {
 		
 		app = (MyApplication) MyApplication.getInstance();
 		shandler = new BaseHandler();
-
+	}
+	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
 		//处理退出消息
-		Intent intent = getIntent();
 		String msg = intent.getStringExtra("data");
 		if(msg!=null && EXITAPP_MESSAGE.equals(msg)){
 			this.finish();
@@ -81,7 +83,7 @@ public class BaseActivity extends Activity {
 	public void onBackPressed() {
 		if(swebview!=null && JS_BACKBTN_CALLBACK!=null && JS_BACKBTN_CALLBACK!="" && !PAGE_ERROR.equals(swebview.getUrl())){
 			runjs(JS_BACKBTN_CALLBACK+"()");
-		}else if(swebview.canGoBack()){
+		}else if(swebview!=null && swebview.canGoBack()){
 			swebview.goBack();
 		}else{
 			super.onBackPressed();
@@ -263,11 +265,12 @@ public class BaseActivity extends Activity {
 	 * @author awen
 	 *
 	 */
-	class BaseHandler extends Handler{
+	@SuppressLint("HandlerLeak")
+	class  BaseHandler extends Handler{
 		@Override
 		public void handleMessage(Message msg) {
 			//Log.d("sjsb-msg",msg.toString());
-			Bundle bundle = msg.getData();
+			//Bundle bundle = msg.getData();
 			switch (msg.what) {
 			case MESSAGE_REFRESHDISABLE:
 				//设置下拉刷新不可用

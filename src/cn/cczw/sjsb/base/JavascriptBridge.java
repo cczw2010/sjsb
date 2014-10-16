@@ -23,6 +23,7 @@ import cn.cczw.comm.CommonApi;
 import cn.cczw.comm.GpsApi;
 import cn.cczw.comm.MyApplication;
 import cn.cczw.comm.VibratorApi;
+import cn.cczw.sjsb.InflaterActivity;
 import cn.cczw.util.DataCleanManager;
 import cn.hugo.android.scanner.CaptureActivity;
 
@@ -383,4 +384,17 @@ public class JavascriptBridge {
 		VibratorApi.getInstance().stop();
 	}
 	
+	/**新开web页面
+	 *@param String ptype 页面类型  web:纯webview  native:纯原生空白页面
+	 *@param String config 配置文件  ptype=web时：url；ptype=native时：json配置字符串
+	 */
+	@JavascriptInterface
+	public void openView(String ptype,String config){
+		Intent intent = new Intent();
+		intent.setClass(activitycontent,InflaterActivity.class);
+		intent.putExtra("ptype", ptype);
+		intent.putExtra("config", config);
+
+		activitycontent.startActivity(intent);
+	}
 }

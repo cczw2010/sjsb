@@ -207,3 +207,14 @@
 * 停止震动 
 
 		SJSB.stopVibrator();
+		
+####窗口开发
+
+* 新开窗口
+
+		/**新开页面
+		*@param String ptype 页面类型  web:纯webview  native:纯原生空白页面（原生控件自定义生成）
+		*@param String config 配置文件  ptype=web时：url；ptype=native时：json配置字符串
+		*/
+		SJSB. openView(ptype,config)
+
