@@ -8,9 +8,15 @@
 
 ####初始化
 
-应用的入口是Assets中的index.html文件。 你只需要修改这个文件就可以了。
-		
-
+* 加载本地文件：  
+	应用默认的入口是Assets中的index.html文件。 你只需要修改这个文件就可以了。  
+	
+* 加载远程路径：  
+	那么你需要修改MainActivity中的initWebview方法中的url地址为你的远程地址
+	
+* 配置方式：  
+	期待中。。。
+	
 ####AndroidManifest.xml配置
 
  AndroidManifest.xml中的配置
