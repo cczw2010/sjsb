@@ -7,25 +7,17 @@
 ##-----------------使用方法：
 
 ####初始化
-如果你想自己单独生成自己的webview页面。那么只需要在你的activity中继承BaseActivity类，在调用initWebView方法即可。  
-如果你做纯html5的应用，那么你只需要把示例代码中的网址改成你app的首页就可以了。
 
-载入的网页自动注入SJSB对象，以支持所有api：
-		
-		/**
-		* 初始化webview;
-		*@param int webviewid 布局中xml中webview的id
-		*@param String url  要引入的html网页（可以是assets中的本地文件也可以是网络的）
-		*@param boolean hasSwipeRefresh  是否支持下拉刷新
-		*/
-		initWebView(int webviewid,String url,boolean hasSwipeRefresh)
+应用的入口是Assets中的index.html文件。 你只需要修改这个文件就可以了。
 		
 
 ####AndroidManifest.xml配置
 
- AndroidManifest.xml中的配置一直
+ AndroidManifest.xml中的配置
 
  个人开发需要修改 AndroidManifest.xml中meta里百度sdk的AcessKey AcessKey请参考百度开发文档。
+ 
+ 当然你只是测试的话也可以不改。用awen提供的测试key也可以。~
  
 
 ##------------------API
@@ -95,11 +87,6 @@
 * 检查是否有网络连接
 
 		SJSB.onLine();
-
-
-* 检查是否有网络连接
-
-		SJSB.onLine();	
 		
 * 获取网络类型
 		

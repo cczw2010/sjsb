@@ -1,8 +1,16 @@
 package cn.cczw.sjsb;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.view.View;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import cn.cczw.sjsb.base.BaseActivity;
 
 /**
@@ -12,7 +20,7 @@ import cn.cczw.sjsb.base.BaseActivity;
  * @author awen
  */
 public class InflaterActivity extends BaseActivity{
-	View root;	//根布局
+	LinearLayout root;	//根布局
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -28,8 +36,39 @@ public class InflaterActivity extends BaseActivity{
 			break;
 		case "native":
 			setContentView(R.layout.inflater);
-			root = findViewById(R.id.root_layout);
+			root = (LinearLayout) findViewById(R.id.root_layout);
+			addScrollList();
+			//addLayout();
 			break;
 		}
+	}
+	
+	
+	public void addLayout(){
+		LinearLayout layout = new LinearLayout(this);
+		
+		TextView textview = new TextView(this);
+		textview.setText("this is test");
+		
+		layout.addView(textview);
+		root.addView(layout);
+	}
+	
+	@SuppressLint("ResourceAsColor")
+	public void addScrollList(){
+
+		ScrollView scroll = new ScrollView(this);
+		scroll.setFillViewport(true);
+		
+		String data[]={"谷歌","苹果","微软","IBM","亚马逊","甲骨文","三星","联想","索尼","HTC","诺基亚","摩托罗拉","百度","华为","中兴"};
+//		String data[]={"谷歌","苹果","微软","IBM"};
+		ListView list = new ListView(this);
+		list.setBackgroundColor(990033);
+		list.setAdapter(new ArrayAdapter<String>(this,android.R.layout.simple_expandable_list_item_1,data));
+		
+		
+		LayoutParams params =  new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+		scroll.addView(list, params);
+		root.addView(scroll,params);
 	}
 }
