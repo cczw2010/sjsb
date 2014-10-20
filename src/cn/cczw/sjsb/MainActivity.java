@@ -14,7 +14,8 @@ public class MainActivity extends BaseActivity {
 	}
 	
 	public void initView(){
-		long t = System.currentTimeMillis(); 
-		initWebView(R.id.webview,"file:///android_asset/index.html?v="+t,true);
+		//long t = System.currentTimeMillis(); 
+		//initWebView(R.id.webview,"file:///android_asset/index.html?v="+t,true);
+		initWebView(R.id.webview,"file:///android_asset/index.html",true);
 	}
 }

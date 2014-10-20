@@ -3,4 +3,5 @@
     <issue id="ManifestOrder">
         <ignore path="AndroidManifest.xml" />
     </issue>
+    <issue id="SetJavaScriptEnabled" severity="ignore" />
 </lint>

@@ -2,8 +2,6 @@ package cn.cczw.sjsb;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ArrayAdapter;

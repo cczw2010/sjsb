@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+    <!-- base -->
+    <color name="holo_blue_light">#33b5e5</color>
+    <color name="holo_gray_light">#999999</color>
+    <color name="holo_green_light">#99cc00</color>
+    <color name="holo_red_light">#ff4444</color>
+    <color name="holo_blue_dark">#0099cc</color>
+    <color name="holo_green_dark">#669900</color>
+    <color name="holo_red_dark">#cc0000</color>
+    <color name="holo_purple">#aa66cc</color>
+    <color name="holo_orange_light">#ffbb33</color>
+    <color name="holo_orange_dark">#ff8800</color>
+    <color name="holo_blue_bright">#00ddff</color>
+    <color name="holo_gray_bright">#CCCCCC</color>
 	<!-- for zxing -->
     <color name="contents_text">#ff000000</color>
     <color name="encode_view">#ffffffff</color>

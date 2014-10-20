@@ -10,8 +10,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -22,17 +20,19 @@ import android.webkit.WebSettings.RenderPriority;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import cn.cczw.comm.MyApplication;
-import cn.cczw.comm.MyChromeClient;
 import cn.cczw.sjsb.MainActivity;
 import cn.cczw.sjsb.R;
+import cn.swiperefreshandload.SwipeRefreshLayout;
+import cn.swiperefreshandload.SwipeRefreshLayout.OnLoadListener;
+import cn.swiperefreshandload.SwipeRefreshLayout.OnRefreshListener;
 
-@SuppressLint("InlinedApi")
+@SuppressLint({ "InlinedApi", "ResourceAsColor" })
 public class BaseActivity extends Activity {
  	public MyApplication app = null;
 	public WebView swebview = null;
 	private Handler shandler = null;
 	private SwipeRefreshLayout mSwipeLayout;
-	private OnRefreshListener swipeListener;
+
 	public static String EXITAPP_MESSAGE = "exitapp";   //退出程序的标示
 	public static String PAGE_ERROR = "file:///android_asset/error.html";   //加载本地页面错误显示页
 	/*js request_code部分*/
@@ -40,17 +40,18 @@ public class BaseActivity extends Activity {
 	final public static int JS_REQUEST_CODE_CAMERA_CAPTURE = 930002;//js相机缩略图 request_code
     final public static int JS_SCANNING_REQUEST_CODE = 930003;   	//js扫二维码 request_code
     /*message部分*/
-    final public static int MESSAGE_REFRESHDISABLE = 1000;   //下拉刷新是否可用
+    final public static int MESSAGE_SWIPEMODE = 1000;				// 设置上拉下拉控件不可用
+    final public static int MESSAGE_CLEARSWIPEANIM = 1001;			// 清空上拉下拉动画
     
 	//临时文件
 	public static String JS_CAMERA_JPG = null;	//相机照的临时文件
 	final public static String JS_SNAPSHOT_JPG = "snapshot_js.jpg";//快照临时文件
 	//js回调函数
 	public String JS_CAMERA_CALLBACK = null;		//相机回调
-	public String JS_MENUBTN_CALLBACK = null;	//菜单键回调
-	public String JS_BACKBTN_CALLBACK = null;	//返回按钮回调
+	public String JS_MENUBTN_CALLBACK = null;		//菜单键回调
+	public String JS_BACKBTN_CALLBACK = null;		//返回按钮回调
 	public String JS_SWIPEREFRESH_CALLBACK = null;	//下拉刷新时的回调
-	
+	public String JS_SWIPERELOAD_CALLBACK = null;	//上拉刷新时的回调
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -91,24 +92,41 @@ public class BaseActivity extends Activity {
 	}
 	
 	/* ----------------------- web --------------------------- */
-	@SuppressLint("SetJavaScriptEnabled")
 	@SuppressWarnings("deprecation")
-	public void initWebView(int webviewid,String url,boolean hasSwipeRefresh) {
+	public void initWebView(int webviewid,String url,boolean enablePullPush) {
 		swebview = (WebView) findViewById(webviewid);
-		//下拉刷新
-		if(hasSwipeRefresh){
-			swipeListener = new OnRefreshListener() {
+		//是否初始化下拉刷新，上拉加载控件
+		if(enablePullPush){
+			mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.id_swipe_container);
+			mSwipeLayout.setOnRefreshListener(new OnRefreshListener() {
 				@Override
 				public void onRefresh() {
-					swebview.reload();
+					if(JS_SWIPEREFRESH_CALLBACK!=null && JS_SWIPEREFRESH_CALLBACK!=""){
+						runjs(JS_SWIPEREFRESH_CALLBACK+"()");
+					}else{
+						mSwipeLayout.setRefreshing(false);
+					}
 				}
-			};
-			mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.id_swipe_container);
-			mSwipeLayout.setColorScheme(android.R.color.holo_green_dark, android.R.color.holo_green_light,
-					android.R.color.holo_orange_light, android.R.color.holo_red_light);
-			mSwipeLayout.setOnRefreshListener(swipeListener);
+			});
+			//下拉刷新
+			mSwipeLayout.setOnLoadListener(new OnLoadListener() {
+				@Override
+				public void onLoad() {
+					if(JS_SWIPERELOAD_CALLBACK!=null && JS_SWIPERELOAD_CALLBACK!=""){
+						runjs(JS_SWIPERELOAD_CALLBACK+"()");
+					}else{
+						mSwipeLayout.setLoading(false);
+					}
+				}
+			});
+	        mSwipeLayout.setColor(R.color.holo_blue_bright,
+		                            R.color.holo_green_light,
+		                            R.color.holo_orange_light,
+		                            R.color.holo_red_light);
+	        mSwipeLayout.setMode(SwipeRefreshLayout.Mode.DISABLED);
+	        //mSwipeLayout.setLoadNoFull(true);
 		}
-
+		
 		WebSettings ws = swebview.getSettings();
 		ws.setJavaScriptCanOpenWindowsAutomatically(true);
 
@@ -160,24 +178,22 @@ public class BaseActivity extends Activity {
 		// swebview.cancelLongPress(); //奇怪，这个设置后 有时候轻点击也不管用了
 		swebview.loadUrl((url).trim());
 	}
-
+	/**
+	 *  清空下拉上拉动画
+	 */
+	private void clearSwipeLayoutAnim(){
+		if(mSwipeLayout!=null){
+			mSwipeLayout.setRefreshing(false);
+			mSwipeLayout.setLoading(false);
+		}
+	}
 	
 	class webviewClient extends WebViewClient{
  		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
  			Log.d("sjsb", "shouldOverrideUrlLoading:"+url);
- 			
- 			//file的话提前判断，不存在报错拦截，不走加载环节，因为用浏览器自己的加载环节各个版本的报错加载错误方式不一样不好处理
- 			if(url.startsWith("file")){
- 				File f = new File(url);
-	 			//Log.d("sjsb","文件不存在"+f.exists());
- 				if(!f.exists()){
- 					//文件不存在
- 					view.loadUrl(PAGE_ERROR);
- 					return true;
- 				}
- 			}
-           return super.shouldOverrideUrlLoading(view, url);
+ 			clearSwipeLayoutAnim();
+ 			return super.shouldOverrideUrlLoading(view, url);
 		}
  		
  		@Override
@@ -185,18 +201,14 @@ public class BaseActivity extends Activity {
  				String description, String failingUrl) {
 			Log.d("sjsb","onReceivedError:"+failingUrl+":errorCode="+errorCode+";description="+description);
  			//如果带下拉刷新，清空动画
-			if(mSwipeLayout!=null){
-				mSwipeLayout.setRefreshing(false);
-			}
+			clearSwipeLayoutAnim();
 			super.onReceivedError(view, errorCode, description, failingUrl);
  		}
 		@Override
 		public void onPageFinished(WebView view, String url) {
 			//Log.d("sjsb","onPageFinished>参数url:"+url+";当前url:"+swebview.getUrl());
 			//如果带下拉刷新，清空动画
-			if(mSwipeLayout!=null){
-				mSwipeLayout.setRefreshing(false);
-			}
+			clearSwipeLayoutAnim();
 			super.onPageFinished(view, url);
 			//Dialogs.getShareDialog(BaseActivity.this, "asdasdasdasd").show();
 		}
@@ -270,18 +282,42 @@ public class BaseActivity extends Activity {
 		@Override
 		public void handleMessage(Message msg) {
 			//Log.d("sjsb-msg",msg.toString());
-			//Bundle bundle = msg.getData();
+			Bundle bundle = msg.getData();
 			switch (msg.what) {
-			case MESSAGE_REFRESHDISABLE:
-				//设置下拉刷新不可用
-				mSwipeLayout.setEnabled(false);
+			case MESSAGE_SWIPEMODE:
+				//设置下拉上拉控件模式
+				if(mSwipeLayout!=null){
+					String mode = bundle.getString("param");
+					switch(mode){
+					case "BOTH":
+						mSwipeLayout.setMode(SwipeRefreshLayout.Mode.BOTH);
+						break;
+					case "DISABLED":
+						mSwipeLayout.setMode(SwipeRefreshLayout.Mode.DISABLED);
+						break;
+					case "REFRESH":
+						mSwipeLayout.setMode(SwipeRefreshLayout.Mode.PULL_FROM_START);
+						break;
+					case "LOAD":
+						mSwipeLayout.setMode(SwipeRefreshLayout.Mode.PULL_FROM_END);
+						break;
+					}
+				}
 				break;
+			case MESSAGE_CLEARSWIPEANIM:
+				//设置下拉刷新不可用
+				clearSwipeLayoutAnim();
 			default:
 				break;
 			}
 		}
 	}
-	// 发送消息
+	/**
+	 * 发送消息
+	 * @param message
+	 * @param fn
+	 * @param param
+	 */
 	public void sendmessage(int message,String fn, String param) {
 		Message msg = shandler.obtainMessage(message);
 		Bundle data = new Bundle();
@@ -290,6 +326,7 @@ public class BaseActivity extends Activity {
 		msg.setData(data);
 		shandler.sendMessage(msg);
 	}
+	
 	/**
 	 * 退出app
 	 */

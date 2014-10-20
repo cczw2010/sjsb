@@ -56,14 +56,30 @@
 		*/
 		SJSB.setBackBtnFn(callback);
 		
-* 设置当前页下拉刷新为不可用
+* 设置当前页上拉下拉模式
 
-		SJSB.disSwipeRefresh();
+		/**
+		* 设置当前页下拉上拉控件的状态，初始为DISABLE
+		* @param String mode  DISABLED 禁用，BOTH 上下都要，REFRESH只要下拉刷新，LOAD只要上拉加载
+		*/
+		SJSB.setSwipeMode(mode);
+		
+* 停止上拉下拉动画
+
+		/**
+		* @param String mode  DISABLED 禁用，BOTH 上下都要，REFRESH只要下拉刷新，LOAD只要上拉加载
+		*/
+		SJSB.clearSwipeAnim()
+
+		
+* 设置下拉刷新的回调方法，前提是当前模式支持下拉刷新
+
+		SJSB.setSwipeRefreshFn(callback)
 		
 		
-* 退出APP
+* 设置上拉加载的回调方法，前提是当前模式支持上拉加载
 
-		SJSB.exitApp();
+		SJSB.setSwipeLoadFn(callback)
 		
 * 显示loading
 
@@ -107,11 +123,16 @@
 
 * 清空浏览器缓存
 
-		sjsb.clearWebCache();
+		SJSB.clearWebCache();
 		
 * 清空应用所有的缓存和数据(包括浏览器)
 
 		SJSB.clearAppCache();
+		
+		
+* 退出APP
+
+		SJSB.exitApp();
 
 * 抓取当前网页截图
 		

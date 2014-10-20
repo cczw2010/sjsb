@@ -57,9 +57,6 @@
 				<button id="nettype">网络类型</button>
 			</li>
 			<li>
-				<button id="loaderror">加载一个不存在的本地页面试试</button>
-			</li>
-			<li>
 				<button id="newweb">新开一个web页面</button>
 			</li>
 			<li>
@@ -104,7 +101,16 @@
 				<button id="vibratorstop">停止</button>
 			</li>
 			<li>
-				<button id="refreshdis">设置下拉刷新不可用</button>
+				<button id="swipemode">设置下拉上拉控件模式为BOTH</button>
+			</li>
+			<li>
+				<button id="swiperefreshfn">设置下拉刷新时刷新web页面</button>
+			</li>
+			<li>
+				<button id="swipeloadfn">设置上拉加载时body添加数据（延迟2000毫秒）</button>
+			</li>
+			<li>
+				<button id="clearswipeanim">停止上拉下拉动画</button>
 			</li>
 			<li>
 				<button id="menubtn">设置menu键的回调</button>
@@ -120,131 +126,145 @@
 			</li>
 		</ul>
 		<script	type="text/javascript">
-		var refreshstatus = 1;
 		document.body.addEventListener('click',function(e){
-		var o = e.target;
-		switch(o.id){
-			case 'toast':
-				SJSB.toast('ok',4,0);
-			break;
-			case 'webwh':
-				var w = SJSB.getWebWidth(),
-					h = SJSB.getWebHeight();
-				SJSB.toast(w+':'+h,0,0);
-			break;
-			case 'progress':
-				SJSB.showProgress('正在加载中，小伙别着急');
-			break;
-			case 'log':
-				SJSB.log('SJSB','这是打印的log日志测试');
+			var o = e.target;
+			switch(o.id){
+				case 'toast':
+					SJSB.toast('ok',4,0);
 				break;
-			case 'deviceinfo':
-				alert(SJSB.getDeviceInfo());
+				case 'webwh':
+					var w = SJSB.getWebWidth(),
+						h = SJSB.getWebHeight();
+					SJSB.toast(w+':'+h,0,0);
 				break;
-			case 'appversion':
-				alert(SJSB.getAppVersion());
+				case 'progress':
+					SJSB.showProgress('正在加载中，小伙别着急');
 				break;
-			case 'online':
-				SJSB.toast(SJSB.onLine(),0,0);
-				break;
-			case 'nettype':
-				SJSB.toast(SJSB.netType(),0,0);
-				break;
-			case 'loaderror':
-				location.href="file:///test.html";
-				break;
-			case 'loadurl':
-				location.href="http://www.baidu.com";
-				break;
-			case 'paths':
-				var cache = SJSB.getCachePath();
-				var appfile = SJSB.getFilePath();
-				alert('应用缓存路径:'+cache+'\n应用文件路径:'+appfile);
-				break;
-			case "clearwebcache":
-				SJSB.clearWebCache();
-				break;
-			case "clearappcache":
-				SJSB.clearAppCache();
-				break;
-			case 'snapshot':
-				var jpg = SJSB.getSnapshot(50);
-				alert(jpg);
-				o.nextSibling.src = jpg;
-				break;
-			case "camera":
-				SJSB.camera(0,0,"camerafn");
-				break;
-			case "qrcodecamera":
-				SJSB.qrcodeCamera("qrshow");
-				break;
-			case "prop":
-				SJSB.setAppProp("temp_key","这是一条应用变量");
-				alert("应用变量：temp_key："+SJSB.getAppProp("temp_key"));
-				break;
-			case "delprop":
-				SJSB.removeAppProp("temp_key");
-				alert("应用变量：temp_key："+SJSB.removeAppProp("temp_key"));
-				break;
-			case "clearprop":
-				SJSB.clearAppProp();
-				alert("应用变量：temp_key的值被设置为："+SJSB.getAppProp("temp_key"));
-				break;
-			case "webmessage":
-				location.href="sjsb://test/test";
-				break;
-			case "menubtn":
-				SJSB.setMenuBtnFn('menubtnfn');
-				break;
-			case "backbtn":
-				SJSB.setBackBtnFn('backbtnfn');
-				break;
-			case "exitapp":
-				SJSB.exitApp();
-				break;
-			case "appcounter":
-				SJSB.toast(SJSB.getAppCounter(),0,0);
-				break;
-			case "getlocation":
-				o.nextSibling.value = SJSB.getLocation()
-				break;
-			case "vibratorstop":
-				SJSB.stopVibrator();
-				break;
-			case "vibrator":
-				SJSB.vibrator(500,100,-1);
-				break;
-			case "vibrator2":
-				SJSB.vibrator(1000,100,0);
-				break;
-			case "refreshdis":
-				SJSB.disSwipeRefresh();
-				break;
-			case "newweb":
-				SJSB.openView("web","http://m.2meiwei.com/article/7105/");
-				break;
-			case "newnative":
-				SJSB.openView("native","");
-				break;
-		}
+				case 'log':
+					SJSB.log('SJSB','这是打印的log日志测试');
+					break;
+				case 'deviceinfo':
+					alert(SJSB.getDeviceInfo());
+					break;
+				case 'appversion':
+					alert(SJSB.getAppVersion());
+					break;
+				case 'online':
+					SJSB.toast(SJSB.onLine(),0,0);
+					break;
+				case 'nettype':
+					SJSB.toast(SJSB.netType(),0,0);
+					break;
+				case 'loadurl':
+					location.href="http://www.baidu.com";
+					break;
+				case 'paths':
+					var cache = SJSB.getCachePath();
+					var appfile = SJSB.getFilePath();
+					alert('应用缓存路径:'+cache+'\n应用文件路径:'+appfile);
+					break;
+				case "clearwebcache":
+					SJSB.clearWebCache();
+					break;
+				case "clearappcache":
+					SJSB.clearAppCache();
+					break;
+				case 'snapshot':
+					var jpg = SJSB.getSnapshot(50);
+					alert(jpg);
+					o.nextSibling.src = jpg;
+					break;
+				case "camera":
+					SJSB.camera(0,0,"camerafn");
+					break;
+				case "qrcodecamera":
+					SJSB.qrcodeCamera("qrshow");
+					break;
+				case "prop":
+					SJSB.setAppProp("temp_key","这是一条应用变量");
+					alert("应用变量：temp_key："+SJSB.getAppProp("temp_key"));
+					break;
+				case "delprop":
+					SJSB.removeAppProp("temp_key");
+					alert("应用变量：temp_key："+SJSB.removeAppProp("temp_key"));
+					break;
+				case "clearprop":
+					SJSB.clearAppProp();
+					alert("应用变量：temp_key的值被设置为："+SJSB.getAppProp("temp_key"));
+					break;
+				case "webmessage":
+					location.href="sjsb://test/test";
+					break;
+				case "menubtn":
+					SJSB.setMenuBtnFn('menubtnfn');
+					break;
+				case "backbtn":
+					SJSB.setBackBtnFn('backbtnfn');
+					break;
+				case "exitapp":
+					SJSB.exitApp();
+					break;
+				case "appcounter":
+					SJSB.toast(SJSB.getAppCounter(),0,0);
+					break;
+				case "getlocation":
+					o.nextSibling.value = SJSB.getLocation()
+					break;
+				case "vibratorstop":
+					SJSB.stopVibrator();
+					break;
+				case "vibrator":
+					SJSB.vibrator(500,100,-1);
+					break;
+				case "vibrator2":
+					SJSB.vibrator(1000,100,0);
+					break;
+				case "swipemode":
+					SJSB.setSwipeMode("BOTH");
+					break;
+				case "clearswipeanim":
+					SJSB.clearSwipeAnim();
+					break;
+				case "swiperefreshfn":
+					SJSB.setSwipeRefreshFn('swipeRefreshFn');
+					break;
+				case "swipeloadfn":
+					SJSB.setSwipeLoadFn('swipeLoadFn');
+					break;
+				case "newweb":
+					SJSB.openView("web","http://m.2meiwei.com/article/7105/");
+					break;
+				case "newnative":
+					SJSB.openView("native","");
+					break;
+			}
 		});
 		function test(result){
-		document.getElementById("camera").nextSibling.src = result;
+			document.getElementById("camera").nextSibling.src = result;
 		}
 		function camerafn(result){
-		alert(result);
-		document.getElementById("camera").nextSibling.src = result;
+			alert(result);
+			document.getElementById("camera").nextSibling.src = result;
 		}
 		function qrshow(result){
-		document.getElementById("qrcodecamera").nextSibling.value = result;
+			document.getElementById("qrcodecamera").nextSibling.value = result;
 		}
 		function menubtnfn(){
-		alert('没菜单，用js自定义吧');
+			alert('没菜单，用js自定义吧');
 		}
 		function backbtnfn(){
-		if(confirm('确认退出吗？')){
-			SJSB.exitApp();
+			if(confirm('确认退出吗？')){
+				SJSB.exitApp();
+			}
 		}
+		function swipeRefreshFn(){
+			location.reload();
+		}
+		function swipeLoadFn(){
+			setTimeout(function(){
+				document.body.innerHTML+="<div>this is load more extend in body!</div>";
+				SJSB.clearSwipeAnim();
+			},2000);
 		}
 		</script>
 	</body>
