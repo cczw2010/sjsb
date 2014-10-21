@@ -2,6 +2,10 @@
     <!--应用常量-->
     
     <string name="app_name">SJSB</string>
+	<!-- 相应sjsb协议的URL(该处请改成用户自己的) -->  
+    <string name="app_scheme">sjsb</string>
+   
+   	<string name="baidu_akey">wnG7TL4yUhKhV9p8tiU4fDip</string>
     <!-- 页面加载错误时的页面 -->
     <string name="jsclassname">SJSB</string>
     

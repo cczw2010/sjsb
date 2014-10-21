@@ -4,8 +4,12 @@ import java.io.File;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,12 +20,14 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.WebSettings;
+import android.webkit.WebSettings.LayoutAlgorithm;
 import android.webkit.WebSettings.RenderPriority;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import cn.cczw.comm.MyApplication;
 import cn.cczw.sjsb.MainActivity;
 import cn.cczw.sjsb.R;
+import cn.cczw.sjsb.R.string;
 import cn.swiperefreshandload.SwipeRefreshLayout;
 import cn.swiperefreshandload.SwipeRefreshLayout.OnLoadListener;
 import cn.swiperefreshandload.SwipeRefreshLayout.OnRefreshListener;
@@ -62,8 +68,27 @@ public class BaseActivity extends Activity {
 		shandler = new BaseHandler();
 	}
 	@Override
+	protected void onResume() {
+		super.onResume();
+		//处理外部消息，看是不是从web调起的，写在这里因为不管新打开app还是激活已打开的app都会走onResume
+		Intent intent = getIntent();
+		String scheme = intent.getScheme();
+		if(scheme!=null && scheme.equals(getResources().getString(R.string.app_scheme))){
+			//Uri uri = getIntent().getData(); 
+			//String arg0= uri.getQueryParameter("arg0");
+			//Log.d("cczw",uri.toString());
+			//Log.d("cczw",uri.getScheme());
+			//Log.d("cczw",uri.getHost());
+			//Log.d("cczw",uri.getQuery());
+		}
+		
+
+	}
+	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
+		//.activity的启动模式是singleTask,getIntent()获取的是旧的intent，必须手动更新一下intent,否则其他地方获取不到最新值
+		setIntent(intent);
 		//处理退出消息
 		String msg = intent.getStringExtra("data");
 		if(msg!=null && EXITAPP_MESSAGE.equals(msg)){
@@ -90,7 +115,6 @@ public class BaseActivity extends Activity {
 			super.onBackPressed();
 		}
 	}
-	
 	/* ----------------------- web --------------------------- */
 	@SuppressWarnings("deprecation")
 	public void initWebView(int webviewid,String url,boolean enablePullPush) {
@@ -141,6 +165,11 @@ public class BaseActivity extends Activity {
  		ws.setAllowFileAccess(true);
 		ws.setGeolocationEnabled(true);
 		ws.setDomStorageEnabled(true);
+		//NORMAL：正常显示，没有渲染变化。
+		//SINGLE_COLUMN：把所有内容放到WebView组件等宽的一列中。
+		//NARROW_COLUMNS：可能的话，使所有列的宽度不超过屏幕宽度。
+		ws.setLayoutAlgorithm(LayoutAlgorithm.SINGLE_COLUMN);
+		ws.setDefaultFontSize(18);
 		//设置定位的数据库路径
 		//ws.setGeolocationDatabasePath(dir);
   		ws.setDatabaseEnabled(true);
@@ -193,7 +222,15 @@ public class BaseActivity extends Activity {
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
  			Log.d("sjsb", "shouldOverrideUrlLoading:"+url);
  			clearSwipeLayoutAnim();
- 			return super.shouldOverrideUrlLoading(view, url);
+			Uri uri=Uri.parse(url);
+			if(uri.getScheme().equals("cczw")){
+				//uri.getHost().equals("cn.cczw")
+				//String arg0=uri.getQueryParameter("arg0");
+
+			}else{
+				view.loadUrl(url);
+			}
+			return true;
 		}
  		
  		@Override
@@ -348,5 +385,4 @@ public class BaseActivity extends Activity {
 			//swebview.evaluateJavascript("javascript:"+jsstr,null);
 		//}
 	}
-	
 } // cls

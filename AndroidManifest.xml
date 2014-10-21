@@ -22,14 +22,21 @@
         <!-- 百度Android定位AccessKey -->
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="wnG7TL4yUhKhV9p8tiU4fDip" />
+            android:value="@string/baidu_akey" />
         
         <activity android:name="MainActivity" android:launchMode="singleTask"
                   android:label="@string/app_name">
-            <intent-filter android:priority="1000">
+            <intent-filter android:priority="10">
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />  
 				<!--<data android:mimeType="image/*" />  //可监听图片打开-->
+            </intent-filter>
+            
+            <intent-filter android:priority="11">
+                <action android:name="android.intent.action.VIEW" /><!-- 显示数据 -->  
+                <category android:name="android.intent.category.DEFAULT" />  
+                <category android:name="android.intent.category.BROWSABLE" /><!-- 定义成浏览器类型，有URL需要处理时会过滤 -->  
+                <data android:scheme="@string/app_scheme" android:host="cn.cczw" />
             </intent-filter>
         </activity>
         <!-- 自定义页面 -->
