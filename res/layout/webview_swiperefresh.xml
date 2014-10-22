@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<cn.swiperefreshandload.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
      android:id="@+id/id_swipe_container"
      android:background="@android:color/darker_gray"
      android:layout_width="match_parent"
      android:layout_height="match_parent">
-		<WebView
+		<cn.cczw.sjsb.base.swebview
 		    android:id="@+id/webview"
 		    android:layout_width="fill_parent"
-		    android:layout_height="fill_parent"
+		    android:layout_height="wrap_content"
 		    android:background="@android:color/white" >
 
-		</WebView>
- </cn.swiperefreshandload.SwipeRefreshLayout>
+		</cn.cczw.sjsb.base.swebview>
+ </android.support.v4.widget.SwipeRefreshLayout>

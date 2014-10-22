@@ -56,15 +56,15 @@
 		*/
 		SJSB.setBackBtnFn(callback);
 		
-* 设置当前页上拉下拉模式
+* 设置当前页上拉模式
 
 		/**
 		* 设置当前页下拉上拉控件的状态，初始为DISABLE
-		* @param String mode  DISABLED 禁用，BOTH 上下都要，REFRESH只要下拉刷新，LOAD只要上拉加载
+		* @param String mode  DISABLED 禁用，ENABLE启用
 		*/
 		SJSB.setSwipeMode(mode);
 		
-* 停止上拉下拉动画
+* 停止上拉动画
 
 		/**
 		* @param String mode  DISABLED 禁用，BOTH 上下都要，REFRESH只要下拉刷新，LOAD只要上拉加载
@@ -75,11 +75,6 @@
 * 设置下拉刷新的回调方法，前提是当前模式支持下拉刷新
 
 		SJSB.setSwipeRefreshFn(callback)
-		
-		
-* 设置上拉加载的回调方法，前提是当前模式支持上拉加载
-
-		SJSB.setSwipeLoadFn(callback)
 		
 * 显示loading
 
@@ -231,4 +226,13 @@
 		*@param String config 配置文件  ptype=web时：url；ptype=native时：json配置字符串
 		*/
 		SJSB. openView(ptype,config)
+		
+* 外部浏览器吊起应用
+
+		在web中写入如下url:
+		sjsb://cn.cczw/xxxx ，
+		即可吊起应用，详细的交互命令暂不实现，优先级放在上下拉控件低版本bug优化之后
+
+
+
 

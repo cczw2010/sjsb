@@ -101,16 +101,13 @@
 				<button id="vibratorstop">停止</button>
 			</li>
 			<li>
-				<button id="swipemode">设置下拉上拉控件模式为BOTH</button>
+				<button id="swipemode">设置下拉控件模式为ENABLE</button>
 			</li>
 			<li>
 				<button id="swiperefreshfn">设置下拉刷新时刷新web页面</button>
 			</li>
 			<li>
-				<button id="swipeloadfn">设置上拉加载时body添加数据（延迟2000毫秒）</button>
-			</li>
-			<li>
-				<button id="clearswipeanim">停止上拉下拉动画</button>
+				<button id="clearswipeanim">停止下拉动画</button>
 			</li>
 			<li>
 				<button id="menubtn">设置menu键的回调</button>
@@ -220,16 +217,13 @@
 					SJSB.vibrator(1000,100,0);
 					break;
 				case "swipemode":
-					SJSB.setSwipeMode("BOTH");
+					SJSB.setSwipeMode("ENABLE");
 					break;
 				case "clearswipeanim":
 					SJSB.clearSwipeAnim();
 					break;
 				case "swiperefreshfn":
 					SJSB.setSwipeRefreshFn('swipeRefreshFn');
-					break;
-				case "swipeloadfn":
-					SJSB.setSwipeLoadFn('swipeLoadFn');
 					break;
 				case "newweb":
 					SJSB.openView("web","http://m.2meiwei.com/article/7105/");
@@ -259,12 +253,6 @@
 		}
 		function swipeRefreshFn(){
 			location.reload();
-		}
-		function swipeLoadFn(){
-			setTimeout(function(){
-				document.body.innerHTML+="<div>this is load more extend in body!</div>";
-				SJSB.clearSwipeAnim();
-			},2000);
 		}
 		</script>
 	</body>

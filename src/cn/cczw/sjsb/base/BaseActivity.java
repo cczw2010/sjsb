@@ -1,19 +1,21 @@
 package cn.cczw.sjsb.base;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -27,15 +29,11 @@ import android.webkit.WebViewClient;
 import cn.cczw.comm.MyApplication;
 import cn.cczw.sjsb.MainActivity;
 import cn.cczw.sjsb.R;
-import cn.cczw.sjsb.R.string;
-import cn.swiperefreshandload.SwipeRefreshLayout;
-import cn.swiperefreshandload.SwipeRefreshLayout.OnLoadListener;
-import cn.swiperefreshandload.SwipeRefreshLayout.OnRefreshListener;
 
 @SuppressLint({ "InlinedApi", "ResourceAsColor" })
 public class BaseActivity extends Activity {
  	public MyApplication app = null;
-	public WebView swebview = null;
+	public swebview swebview = null;
 	private Handler shandler = null;
 	private SwipeRefreshLayout mSwipeLayout;
 
@@ -57,7 +55,6 @@ public class BaseActivity extends Activity {
 	public String JS_MENUBTN_CALLBACK = null;		//菜单键回调
 	public String JS_BACKBTN_CALLBACK = null;		//返回按钮回调
 	public String JS_SWIPEREFRESH_CALLBACK = null;	//下拉刷新时的回调
-	public String JS_SWIPERELOAD_CALLBACK = null;	//上拉刷新时的回调
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -118,7 +115,7 @@ public class BaseActivity extends Activity {
 	/* ----------------------- web --------------------------- */
 	@SuppressWarnings("deprecation")
 	public void initWebView(int webviewid,String url,boolean enablePullPush) {
-		swebview = (WebView) findViewById(webviewid);
+		swebview = (swebview) findViewById(webviewid);
 		//是否初始化下拉刷新，上拉加载控件
 		if(enablePullPush){
 			mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.id_swipe_container);
@@ -132,23 +129,11 @@ public class BaseActivity extends Activity {
 					}
 				}
 			});
-			//下拉刷新
-			mSwipeLayout.setOnLoadListener(new OnLoadListener() {
-				@Override
-				public void onLoad() {
-					if(JS_SWIPERELOAD_CALLBACK!=null && JS_SWIPERELOAD_CALLBACK!=""){
-						runjs(JS_SWIPERELOAD_CALLBACK+"()");
-					}else{
-						mSwipeLayout.setLoading(false);
-					}
-				}
-			});
-	        mSwipeLayout.setColor(R.color.holo_blue_bright,
+	        mSwipeLayout.setColorScheme(R.color.holo_blue_bright,
 		                            R.color.holo_green_light,
 		                            R.color.holo_orange_light,
 		                            R.color.holo_red_light);
-	        mSwipeLayout.setMode(SwipeRefreshLayout.Mode.DISABLED);
-	        //mSwipeLayout.setLoadNoFull(true);
+	        mSwipeLayout.setEnabled(false);
 		}
 		
 		WebSettings ws = swebview.getSettings();
@@ -189,13 +174,13 @@ public class BaseActivity extends Activity {
   		ws.setCacheMode(WebSettings.LOAD_NO_CACHE);
   		//设置应用缓存的最大尺寸
   		//ws.setAppCacheMaxSize(1024*1024*8);
-
   		swebview.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);// 去掉滚动条占位
  		swebview.setHorizontalScrollBarEnabled(false);
 		swebview.setHorizontalScrollbarOverlay(false);
-		swebview.setVerticalScrollBarEnabled(false);
-		swebview.setVerticalScrollbarOverlay(false);
-		swebview.setVerticalFadingEdgeEnabled(false);
+		swebview.setHorizontalFadingEdgeEnabled(false);
+		swebview.setVerticalScrollBarEnabled(true);
+		swebview.setVerticalScrollbarOverlay(true);
+		swebview.setVerticalFadingEdgeEnabled(true);
 		swebview.requestFocus();// 支持网页内部操作，比如点击按钮
 //		swebview.setFocusable(true);
 		swebview.setSelected(false);
@@ -213,7 +198,6 @@ public class BaseActivity extends Activity {
 	private void clearSwipeLayoutAnim(){
 		if(mSwipeLayout!=null){
 			mSwipeLayout.setRefreshing(false);
-			mSwipeLayout.setLoading(false);
 		}
 	}
 	
@@ -272,7 +256,7 @@ public class BaseActivity extends Activity {
 	    		if(resultCode == RESULT_OK){
 			    	Bundle bundle=data.getExtras();  //data为B中回传的Intent
 			    	Bitmap bitmap = (Bitmap) bundle.get("data");
-			    	_data = app.saveFileToSdcard(bitmap,JS_CAMERA_JPG,100);
+			    	_data = saveFileToSdcard(bitmap,null,JS_CAMERA_JPG,100);
 			    	if(_data!=null && _data!=""){
 			    		_data = "file://"+_data;
 			    	}
@@ -326,21 +310,14 @@ public class BaseActivity extends Activity {
 				if(mSwipeLayout!=null){
 					String mode = bundle.getString("param");
 					switch(mode){
-					case "BOTH":
-						mSwipeLayout.setMode(SwipeRefreshLayout.Mode.BOTH);
+					case "ENABLE":
+						mSwipeLayout.setEnabled(true);
 						break;
 					case "DISABLED":
-						mSwipeLayout.setMode(SwipeRefreshLayout.Mode.DISABLED);
-						break;
-					case "REFRESH":
-						mSwipeLayout.setMode(SwipeRefreshLayout.Mode.PULL_FROM_START);
-						break;
-					case "LOAD":
-						mSwipeLayout.setMode(SwipeRefreshLayout.Mode.PULL_FROM_END);
+						mSwipeLayout.setEnabled(false);
 						break;
 					}
 				}
-				break;
 			case MESSAGE_CLEARSWIPEANIM:
 				//设置下拉刷新不可用
 				clearSwipeLayoutAnim();
@@ -384,5 +361,28 @@ public class BaseActivity extends Activity {
 		//} else {
 			//swebview.evaluateJavascript("javascript:"+jsstr,null);
 		//}
+	}
+	/**
+	 * 保存图片文件到自定义sdcard目录中
+	 * @param io    文件输入流
+	 * @param filename 文件名
+	 * @return 文件路径
+	 */
+	public String saveFileToSdcard(Bitmap bm,String Path,String filename,int quantity){
+		String path = null;
+		if(Path==null){
+			Path = app.getAppFilePath();
+		}
+		File  f = new File(Path,filename);
+        try {
+			BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(f));
+	        bm.compress(Bitmap.CompressFormat.JPEG, quantity, bos);
+			bos.flush();
+	        bos.close();
+	        path = f.getAbsolutePath();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}  
+		return path;
 	}
 } // cls

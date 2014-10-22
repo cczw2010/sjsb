@@ -93,7 +93,7 @@ public class JavascriptBridge {
 	}
 	/**
 	 * 设置当前页下拉上拉控件的状态，初始为DISABLE
-	 * @param String mode  DISABLED 禁用，BOTH 上下都要，REFRESH只要下拉刷新，LOAD只要上拉加载
+	 * @param String mode  DISABLED 禁用，ENABLE启用
 	 */
 	@JavascriptInterface
 	public void setSwipeMode(String mode){
@@ -114,14 +114,6 @@ public class JavascriptBridge {
 	@JavascriptInterface
 	public void setSwipeRefreshFn(String callback){
 		activitycontent.JS_SWIPEREFRESH_CALLBACK = callback;
-	}
-	/**
-	 * 设置上拉加载的回调方法，前提是当前模式支持上拉加载
-	 * @param callback
-	 */
-	@JavascriptInterface
-	public void setSwipeLoadFn(String callback){
-		activitycontent.JS_SWIPERELOAD_CALLBACK = callback;
 	}
 	/**
 	 * 退出应用
@@ -317,7 +309,7 @@ public class JavascriptBridge {
 	@JavascriptInterface
 	public String getSnapshot(int quantity){
 		Bitmap bitmap = commapi.shotView(swebview);
-		String result = myapp.saveFileToSdcard(bitmap,BaseActivity.JS_SNAPSHOT_JPG,60);
+		String result = activitycontent.saveFileToSdcard(bitmap,null,BaseActivity.JS_SNAPSHOT_JPG,60);
 		//Log.d("SJSB",result);
 		if(result!=null && result!=""){
 			result = "file://"+result;
