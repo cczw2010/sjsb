@@ -4,11 +4,11 @@
      android:background="@android:color/darker_gray"
      android:layout_width="match_parent"
      android:layout_height="match_parent">
-		<WebView
+		<cn.cczw.sjsb.base.swebview
 		    android:id="@+id/webview"
 		    android:layout_width="fill_parent"
-		    android:layout_height="fill_parent"
+		    android:layout_height="wrap_content"
 		    android:background="@android:color/white" >
 
-		</WebView>
+		</cn.cczw.sjsb.base.swebview>
  </android.support.v4.widget.SwipeRefreshLayout>

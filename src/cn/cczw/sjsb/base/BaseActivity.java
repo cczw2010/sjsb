@@ -1,11 +1,15 @@
 package cn.cczw.sjsb.base;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,21 +22,21 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.WebSettings;
+import android.webkit.WebSettings.LayoutAlgorithm;
 import android.webkit.WebSettings.RenderPriority;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import cn.cczw.comm.MyApplication;
-import cn.cczw.comm.MyChromeClient;
 import cn.cczw.sjsb.MainActivity;
 import cn.cczw.sjsb.R;
 
-@SuppressLint("InlinedApi")
+@SuppressLint({ "InlinedApi", "ResourceAsColor" })
 public class BaseActivity extends Activity {
  	public MyApplication app = null;
-	public WebView swebview = null;
+	public swebview swebview = null;
 	private Handler shandler = null;
 	private SwipeRefreshLayout mSwipeLayout;
-	private OnRefreshListener swipeListener;
+
 	public static String EXITAPP_MESSAGE = "exitapp";   //退出程序的标示
 	public static String PAGE_ERROR = "file:///android_asset/error.html";   //加载本地页面错误显示页
 	/*js request_code部分*/
@@ -40,17 +44,17 @@ public class BaseActivity extends Activity {
 	final public static int JS_REQUEST_CODE_CAMERA_CAPTURE = 930002;//js相机缩略图 request_code
     final public static int JS_SCANNING_REQUEST_CODE = 930003;   	//js扫二维码 request_code
     /*message部分*/
-    final public static int MESSAGE_REFRESHDISABLE = 1000;   //下拉刷新是否可用
+    final public static int MESSAGE_SWIPEMODE = 1000;				// 设置上拉下拉控件不可用
+    final public static int MESSAGE_CLEARSWIPEANIM = 1001;			// 清空上拉下拉动画
     
 	//临时文件
 	public static String JS_CAMERA_JPG = null;	//相机照的临时文件
 	final public static String JS_SNAPSHOT_JPG = "snapshot_js.jpg";//快照临时文件
 	//js回调函数
 	public String JS_CAMERA_CALLBACK = null;		//相机回调
-	public String JS_MENUBTN_CALLBACK = null;	//菜单键回调
-	public String JS_BACKBTN_CALLBACK = null;	//返回按钮回调
+	public String JS_MENUBTN_CALLBACK = null;		//菜单键回调
+	public String JS_BACKBTN_CALLBACK = null;		//返回按钮回调
 	public String JS_SWIPEREFRESH_CALLBACK = null;	//下拉刷新时的回调
-	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -61,8 +65,27 @@ public class BaseActivity extends Activity {
 		shandler = new BaseHandler();
 	}
 	@Override
+	protected void onResume() {
+		super.onResume();
+		//处理外部消息，看是不是从web调起的，写在这里因为不管新打开app还是激活已打开的app都会走onResume
+		Intent intent = getIntent();
+		String scheme = intent.getScheme();
+		if(scheme!=null && scheme.equals(getResources().getString(R.string.app_scheme))){
+			//Uri uri = getIntent().getData(); 
+			//String arg0= uri.getQueryParameter("arg0");
+			//Log.d("cczw",uri.toString());
+			//Log.d("cczw",uri.getScheme());
+			//Log.d("cczw",uri.getHost());
+			//Log.d("cczw",uri.getQuery());
+		}
+		
+
+	}
+	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
+		//.activity的启动模式是singleTask,getIntent()获取的是旧的intent，必须手动更新一下intent,否则其他地方获取不到最新值
+		setIntent(intent);
 		//处理退出消息
 		String msg = intent.getStringExtra("data");
 		if(msg!=null && EXITAPP_MESSAGE.equals(msg)){
@@ -89,26 +112,30 @@ public class BaseActivity extends Activity {
 			super.onBackPressed();
 		}
 	}
-	
 	/* ----------------------- web --------------------------- */
-	@SuppressLint("SetJavaScriptEnabled")
 	@SuppressWarnings("deprecation")
-	public void initWebView(int webviewid,String url,boolean hasSwipeRefresh) {
-		swebview = (WebView) findViewById(webviewid);
-		//下拉刷新
-		if(hasSwipeRefresh){
-			swipeListener = new OnRefreshListener() {
+	public void initWebView(int webviewid,String url,boolean enablePullPush) {
+		swebview = (swebview) findViewById(webviewid);
+		//是否初始化下拉刷新，上拉加载控件
+		if(enablePullPush){
+			mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.id_swipe_container);
+			mSwipeLayout.setOnRefreshListener(new OnRefreshListener() {
 				@Override
 				public void onRefresh() {
-					swebview.reload();
+					if(JS_SWIPEREFRESH_CALLBACK!=null && JS_SWIPEREFRESH_CALLBACK!=""){
+						runjs(JS_SWIPEREFRESH_CALLBACK+"()");
+					}else{
+						mSwipeLayout.setRefreshing(false);
+					}
 				}
-			};
-			mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.id_swipe_container);
-			mSwipeLayout.setColorScheme(android.R.color.holo_green_dark, android.R.color.holo_green_light,
-					android.R.color.holo_orange_light, android.R.color.holo_red_light);
-			mSwipeLayout.setOnRefreshListener(swipeListener);
+			});
+	        mSwipeLayout.setColorScheme(R.color.holo_blue_bright,
+		                            R.color.holo_green_light,
+		                            R.color.holo_orange_light,
+		                            R.color.holo_red_light);
+	        mSwipeLayout.setEnabled(false);
 		}
-
+		
 		WebSettings ws = swebview.getSettings();
 		ws.setJavaScriptCanOpenWindowsAutomatically(true);
 
@@ -123,6 +150,11 @@ public class BaseActivity extends Activity {
  		ws.setAllowFileAccess(true);
 		ws.setGeolocationEnabled(true);
 		ws.setDomStorageEnabled(true);
+		//NORMAL：正常显示，没有渲染变化。
+		//SINGLE_COLUMN：把所有内容放到WebView组件等宽的一列中。
+		//NARROW_COLUMNS：可能的话，使所有列的宽度不超过屏幕宽度。
+		ws.setLayoutAlgorithm(LayoutAlgorithm.SINGLE_COLUMN);
+		ws.setDefaultFontSize(18);
 		//设置定位的数据库路径
 		//ws.setGeolocationDatabasePath(dir);
   		ws.setDatabaseEnabled(true);
@@ -142,13 +174,13 @@ public class BaseActivity extends Activity {
   		ws.setCacheMode(WebSettings.LOAD_NO_CACHE);
   		//设置应用缓存的最大尺寸
   		//ws.setAppCacheMaxSize(1024*1024*8);
-
   		swebview.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);// 去掉滚动条占位
  		swebview.setHorizontalScrollBarEnabled(false);
 		swebview.setHorizontalScrollbarOverlay(false);
-		swebview.setVerticalScrollBarEnabled(false);
-		swebview.setVerticalScrollbarOverlay(false);
-		swebview.setVerticalFadingEdgeEnabled(false);
+		swebview.setHorizontalFadingEdgeEnabled(false);
+		swebview.setVerticalScrollBarEnabled(true);
+		swebview.setVerticalScrollbarOverlay(true);
+		swebview.setVerticalFadingEdgeEnabled(true);
 		swebview.requestFocus();// 支持网页内部操作，比如点击按钮
 //		swebview.setFocusable(true);
 		swebview.setSelected(false);
@@ -160,24 +192,29 @@ public class BaseActivity extends Activity {
 		// swebview.cancelLongPress(); //奇怪，这个设置后 有时候轻点击也不管用了
 		swebview.loadUrl((url).trim());
 	}
-
+	/**
+	 *  清空下拉上拉动画
+	 */
+	private void clearSwipeLayoutAnim(){
+		if(mSwipeLayout!=null){
+			mSwipeLayout.setRefreshing(false);
+		}
+	}
 	
 	class webviewClient extends WebViewClient{
  		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
  			Log.d("sjsb", "shouldOverrideUrlLoading:"+url);
- 			
- 			//file的话提前判断，不存在报错拦截，不走加载环节，因为用浏览器自己的加载环节各个版本的报错加载错误方式不一样不好处理
- 			if(url.startsWith("file")){
- 				File f = new File(url);
-	 			//Log.d("sjsb","文件不存在"+f.exists());
- 				if(!f.exists()){
- 					//文件不存在
- 					view.loadUrl(PAGE_ERROR);
- 					return true;
- 				}
- 			}
-           return super.shouldOverrideUrlLoading(view, url);
+ 			clearSwipeLayoutAnim();
+			Uri uri=Uri.parse(url);
+			if(uri.getScheme().equals("cczw")){
+				//uri.getHost().equals("cn.cczw")
+				//String arg0=uri.getQueryParameter("arg0");
+
+			}else{
+				view.loadUrl(url);
+			}
+			return true;
 		}
  		
  		@Override
@@ -185,18 +222,14 @@ public class BaseActivity extends Activity {
  				String description, String failingUrl) {
 			Log.d("sjsb","onReceivedError:"+failingUrl+":errorCode="+errorCode+";description="+description);
  			//如果带下拉刷新，清空动画
-			if(mSwipeLayout!=null){
-				mSwipeLayout.setRefreshing(false);
-			}
+			clearSwipeLayoutAnim();
 			super.onReceivedError(view, errorCode, description, failingUrl);
  		}
 		@Override
 		public void onPageFinished(WebView view, String url) {
 			//Log.d("sjsb","onPageFinished>参数url:"+url+";当前url:"+swebview.getUrl());
 			//如果带下拉刷新，清空动画
-			if(mSwipeLayout!=null){
-				mSwipeLayout.setRefreshing(false);
-			}
+			clearSwipeLayoutAnim();
 			super.onPageFinished(view, url);
 			//Dialogs.getShareDialog(BaseActivity.this, "asdasdasdasd").show();
 		}
@@ -223,7 +256,7 @@ public class BaseActivity extends Activity {
 	    		if(resultCode == RESULT_OK){
 			    	Bundle bundle=data.getExtras();  //data为B中回传的Intent
 			    	Bitmap bitmap = (Bitmap) bundle.get("data");
-			    	_data = app.saveFileToSdcard(bitmap,JS_CAMERA_JPG,100);
+			    	_data = saveFileToSdcard(bitmap,null,JS_CAMERA_JPG,100);
 			    	if(_data!=null && _data!=""){
 			    		_data = "file://"+_data;
 			    	}
@@ -270,18 +303,35 @@ public class BaseActivity extends Activity {
 		@Override
 		public void handleMessage(Message msg) {
 			//Log.d("sjsb-msg",msg.toString());
-			//Bundle bundle = msg.getData();
+			Bundle bundle = msg.getData();
 			switch (msg.what) {
-			case MESSAGE_REFRESHDISABLE:
+			case MESSAGE_SWIPEMODE:
+				//设置下拉上拉控件模式
+				if(mSwipeLayout!=null){
+					String mode = bundle.getString("param");
+					switch(mode){
+					case "ENABLE":
+						mSwipeLayout.setEnabled(true);
+						break;
+					case "DISABLED":
+						mSwipeLayout.setEnabled(false);
+						break;
+					}
+				}
+			case MESSAGE_CLEARSWIPEANIM:
 				//设置下拉刷新不可用
-				mSwipeLayout.setEnabled(false);
-				break;
+				clearSwipeLayoutAnim();
 			default:
 				break;
 			}
 		}
 	}
-	// 发送消息
+	/**
+	 * 发送消息
+	 * @param message
+	 * @param fn
+	 * @param param
+	 */
 	public void sendmessage(int message,String fn, String param) {
 		Message msg = shandler.obtainMessage(message);
 		Bundle data = new Bundle();
@@ -290,6 +340,7 @@ public class BaseActivity extends Activity {
 		msg.setData(data);
 		shandler.sendMessage(msg);
 	}
+	
 	/**
 	 * 退出app
 	 */
@@ -311,5 +362,27 @@ public class BaseActivity extends Activity {
 			//swebview.evaluateJavascript("javascript:"+jsstr,null);
 		//}
 	}
-	
+	/**
+	 * 保存图片文件到自定义sdcard目录中
+	 * @param io    文件输入流
+	 * @param filename 文件名
+	 * @return 文件路径
+	 */
+	public String saveFileToSdcard(Bitmap bm,String Path,String filename,int quantity){
+		String path = null;
+		if(Path==null){
+			Path = app.getAppFilePath();
+		}
+		File  f = new File(Path,filename);
+        try {
+			BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(f));
+	        bm.compress(Bitmap.CompressFormat.JPEG, quantity, bos);
+			bos.flush();
+	        bos.close();
+	        path = f.getAbsolutePath();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}  
+		return path;
+	}
 } // cls

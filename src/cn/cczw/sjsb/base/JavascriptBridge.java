@@ -92,11 +92,28 @@ public class JavascriptBridge {
 		activitycontent.JS_BACKBTN_CALLBACK = callback;
 	}
 	/**
-	 * 设置当前页下拉刷新为不可用
+	 * 设置当前页下拉上拉控件的状态，初始为DISABLE
+	 * @param String mode  DISABLED 禁用，ENABLE启用
 	 */
 	@JavascriptInterface
-	public void disSwipeRefresh(){
-		activitycontent.sendmessage(BaseActivity.MESSAGE_REFRESHDISABLE, null,null);
+	public void setSwipeMode(String mode){
+		activitycontent.sendmessage(BaseActivity.MESSAGE_SWIPEMODE, null,mode);
+	}
+	/**
+	 * 停止上拉下拉动画
+	 * @param String mode  DISABLED 禁用，BOTH 上下都要，REFRESH只要下拉刷新，LOAD只要上拉加载
+	 */
+	@JavascriptInterface
+	public void clearSwipeAnim(){
+		activitycontent.sendmessage(BaseActivity.MESSAGE_CLEARSWIPEANIM, null,null);
+	}
+	/**
+	 * 设置下拉刷新的回调方法，前提是当前模式支持下拉刷新
+	 * @param callback
+	 */
+	@JavascriptInterface
+	public void setSwipeRefreshFn(String callback){
+		activitycontent.JS_SWIPEREFRESH_CALLBACK = callback;
 	}
 	/**
 	 * 退出应用
@@ -292,7 +309,7 @@ public class JavascriptBridge {
 	@JavascriptInterface
 	public String getSnapshot(int quantity){
 		Bitmap bitmap = commapi.shotView(swebview);
-		String result = myapp.saveFileToSdcard(bitmap,BaseActivity.JS_SNAPSHOT_JPG,60);
+		String result = activitycontent.saveFileToSdcard(bitmap,null,BaseActivity.JS_SNAPSHOT_JPG,60);
 		//Log.d("SJSB",result);
 		if(result!=null && result!=""){
 			result = "file://"+result;
