@@ -10,7 +10,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -38,7 +37,6 @@ public class BaseActivity extends Activity {
 	private SwipeRefreshLayout mSwipeLayout;
 
 	public static String EXITAPP_MESSAGE = "exitapp";   //退出程序的标示
-	public static String PAGE_ERROR = "file:///android_asset/error.html";   //加载本地页面错误显示页
 	/*js request_code部分*/
 	final public static int JS_REQUEST_CODE_CAMERA = 930001;		//js相机原图 request_code
 	final public static int JS_REQUEST_CODE_CAMERA_CAPTURE = 930002;//js相机缩略图 request_code
@@ -95,7 +93,7 @@ public class BaseActivity extends Activity {
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		//Log.d("SJSB",this.JS_MENUBTN_CALLBACK+"==JS_MENUBTN_CALLBACK");
-		if(swebview!=null && JS_MENUBTN_CALLBACK!=null && JS_MENUBTN_CALLBACK!="" && !PAGE_ERROR.equals(swebview.getUrl())){
+		if(swebview!=null && JS_MENUBTN_CALLBACK!=null && JS_MENUBTN_CALLBACK!="" ){
 			runjs(JS_MENUBTN_CALLBACK+"()");
 			return false;
 		}else{
@@ -104,7 +102,7 @@ public class BaseActivity extends Activity {
 	}
 	@Override
 	public void onBackPressed() {
-		if(swebview!=null && JS_BACKBTN_CALLBACK!=null && JS_BACKBTN_CALLBACK!="" && !PAGE_ERROR.equals(swebview.getUrl())){
+		if(swebview!=null && JS_BACKBTN_CALLBACK!=null && JS_BACKBTN_CALLBACK!="" ){
 			runjs(JS_BACKBTN_CALLBACK+"()");
 		}else if(swebview!=null && swebview.canGoBack()){
 			swebview.goBack();
@@ -146,7 +144,9 @@ public class BaseActivity extends Activity {
 		ws.setSupportZoom(false);	// 设置是否支持缩放
 		ws.setBuiltInZoomControls(false);// 设置是否启用内置的缩放控件
 		
-		ws.setSupportMultipleWindows(true);
+		ws.setSupportMultipleWindows(false);
+		ws.setSaveFormData(false);
+		ws.setSavePassword(false);
  		ws.setAllowFileAccess(true);
 		ws.setGeolocationEnabled(true);
 		ws.setDomStorageEnabled(true);
@@ -160,10 +160,8 @@ public class BaseActivity extends Activity {
   		ws.setDatabaseEnabled(true);
 		//设置数据库路径
 		//ws.setDatabasePath(dir);
-  		//把图片加载放在最后来加载渲染  4.4的话会出现无法加载图片的bug，鬼知道为什么
-  		if(Build.VERSION.SDK_INT<19){
-  			ws.setBlockNetworkImage(true);
-  		}
+  		//把图片加载放在最后来加载渲染  4.4的话会出现无法加载图片的bug，低版本有时候线上的图片也会出问题
+  		//ws.setBlockNetworkImage(true);
   		ws.setLoadsImagesAutomatically(true); //自动加载图片
    		//开启应用程序缓存api
   		//ws.setAppCacheEnabled(true);
@@ -205,7 +203,7 @@ public class BaseActivity extends Activity {
  		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
  			Log.d("sjsb", "shouldOverrideUrlLoading:"+url);
- 			clearSwipeLayoutAnim();
+ 			//clearSwipeLayoutAnim();
 			Uri uri=Uri.parse(url);
 			if(uri.getScheme().equals("cczw")){
 				//uri.getHost().equals("cn.cczw")
