@@ -218,7 +218,7 @@ public class BaseActivity extends Activity {
  		@Override
  		public void onReceivedError(WebView view, int errorCode,
  				String description, String failingUrl) {
-			Log.d("sjsb","onReceivedError:"+failingUrl+":errorCode="+errorCode+";description="+description);
+			//Log.d("sjsb","onReceivedError:"+failingUrl+":errorCode="+errorCode+";description="+description);
  			//如果带下拉刷新，清空动画
 			clearSwipeLayoutAnim();
 			super.onReceivedError(view, errorCode, description, failingUrl);
