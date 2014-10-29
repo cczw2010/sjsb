@@ -350,7 +350,6 @@ public class JavascriptBridge {
   		
 		Intent intent = new Intent();  
         intent.setClass(activitycontent, CaptureActivity.class);  
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);  
         activitycontent.startActivityForResult(intent, BaseActivity.JS_SCANNING_REQUEST_CODE);
        
 	}
