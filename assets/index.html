@@ -104,10 +104,13 @@
 				<button id="swipemode">设置下拉控件模式为ENABLE</button>
 			</li>
 			<li>
+				<button id="swipemode1">设置下拉控件模式为DISABLED</button>
+			</li>
+			<li>
 				<button id="swiperefreshfn">设置下拉刷新时刷新web页面</button>
 			</li>
 			<li>
-				<button id="clearswipeanim">停止下拉动画</button>
+				<button id="clearswipeanim">停止当前的下拉动画（如果正在动画）</button>
 			</li>
 			<li>
 				<button id="menubtn">设置menu键的回调</button>
@@ -218,6 +221,9 @@
 					break;
 				case "swipemode":
 					SJSB.setSwipeMode("ENABLE");
+					break;
+				case "swipemode1":
+					SJSB.setSwipeMode("DISABLED");
 					break;
 				case "clearswipeanim":
 					SJSB.clearSwipeAnim();

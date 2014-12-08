@@ -6,7 +6,7 @@
   	<uses-sdk android:minSdkVersion="8" android:targetSdkVersion="19"/>
     <application android:icon="@drawable/icon" 
         android:label="@string/app_name" 
-        android:name="cn.cczw.comm.MyApplication"
+        android:name="cn.cczw.sjsb.base.MyApplication"
         android:theme="@android:style/Theme.NoTitleBar"
         android:allowBackup="true"
  		android:hardwareAccelerated="true">

@@ -1,4 +1,4 @@
-package cn.cczw.comm;
+package cn.cczw.sjsb.base;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

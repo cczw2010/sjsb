@@ -18,11 +18,6 @@ import android.webkit.CookieSyncManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.widget.Toast;
-import cn.cczw.comm.AppReciver;
-import cn.cczw.comm.CommonApi;
-import cn.cczw.comm.GpsApi;
-import cn.cczw.comm.MyApplication;
-import cn.cczw.comm.VibratorApi;
 import cn.cczw.sjsb.InflaterActivity;
 import cn.cczw.util.DataCleanManager;
 import cn.hugo.android.scanner.CaptureActivity;
@@ -100,7 +95,7 @@ public class JavascriptBridge {
 		activitycontent.sendmessage(BaseActivity.MESSAGE_SWIPEMODE, null,mode);
 	}
 	/**
-	 * 停止上拉下拉动画
+	 * 停止下拉动画
 	 * @param String mode  DISABLED 禁用，BOTH 上下都要，REFRESH只要下拉刷新，LOAD只要上拉加载
 	 */
 	@JavascriptInterface

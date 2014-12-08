@@ -1,4 +1,4 @@
-package cn.cczw.comm;
+package cn.cczw.sjsb.base;
 
 import android.content.Context;
 import android.os.Vibrator;

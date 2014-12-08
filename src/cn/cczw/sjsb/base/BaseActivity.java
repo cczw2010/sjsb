@@ -25,7 +25,6 @@ import android.webkit.WebSettings.LayoutAlgorithm;
 import android.webkit.WebSettings.RenderPriority;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import cn.cczw.comm.MyApplication;
 import cn.cczw.sjsb.MainActivity;
 import cn.cczw.sjsb.R;
 
@@ -42,8 +41,8 @@ public class BaseActivity extends Activity {
 	final public static int JS_REQUEST_CODE_CAMERA_CAPTURE = 930002;//js相机缩略图 request_code
     final public static int JS_SCANNING_REQUEST_CODE = 930003;   	//js扫二维码 request_code
     /*message部分*/
-    final public static int MESSAGE_SWIPEMODE = 1000;				// 设置上拉下拉控件不可用
-    final public static int MESSAGE_CLEARSWIPEANIM = 1001;			// 清空上拉下拉动画
+    final public static int MESSAGE_SWIPEMODE = 1000;				// 设置下拉控件可不可用
+    final public static int MESSAGE_CLEARSWIPEANIM = 1001;			// 清空下拉动画
     
 	//临时文件
 	public static String JS_CAMERA_JPG = null;	//相机照的临时文件
@@ -114,7 +113,7 @@ public class BaseActivity extends Activity {
 	@SuppressWarnings("deprecation")
 	public void initWebView(int webviewid,String url,boolean enablePullPush) {
 		swebview = (swebview) findViewById(webviewid);
-		//是否初始化下拉刷新，上拉加载控件
+		//是否初始化下拉刷新控件
 		if(enablePullPush){
 			mSwipeLayout = (SwipeRefreshLayout) findViewById(R.id.id_swipe_container);
 			mSwipeLayout.setOnRefreshListener(new OnRefreshListener() {
@@ -191,7 +190,7 @@ public class BaseActivity extends Activity {
 		swebview.loadUrl((url).trim());
 	}
 	/**
-	 *  清空下拉上拉动画
+	 *  清空下拉动画
 	 */
 	private void clearSwipeLayoutAnim(){
 		if(mSwipeLayout!=null){
@@ -304,7 +303,7 @@ public class BaseActivity extends Activity {
 			Bundle bundle = msg.getData();
 			switch (msg.what) {
 			case MESSAGE_SWIPEMODE:
-				//设置下拉上拉控件模式
+				//设置下拉控件模式
 				if(mSwipeLayout!=null){
 					String mode = bundle.getString("param");
 					switch(mode){

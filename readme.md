@@ -56,19 +56,16 @@
 		*/
 		SJSB.setBackBtnFn(callback);
 		
-* 设置当前页上拉模式
+* 设置下拉控件的状态
 
 		/**
-		* 设置当前页下拉上拉控件的状态，初始为DISABLE
+		* 设置当前页下拉控件的状态，初始为DISABLED
 		* @param String mode  DISABLED 禁用，ENABLE启用
 		*/
 		SJSB.setSwipeMode(mode);
 		
-* 停止上拉动画
+* 停止当前的下拉动画
 
-		/**
-		* @param String mode  DISABLED 禁用，BOTH 上下都要，REFRESH只要下拉刷新，LOAD只要上拉加载
-		*/
 		SJSB.clearSwipeAnim()
 
 		
