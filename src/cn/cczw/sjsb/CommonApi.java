@@ -1,4 +1,4 @@
-package cn.cczw.sjsb.base;
+package cn.cczw.sjsb;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -40,7 +40,7 @@ public class CommonApi {
 		}
 	}
 	
-	//获取单例,确保调用之前已经初始化
+	//获取单例,确保调用之前已经初始化,之所以搞这么费劲是为了一次初始化后外部不用再传参初始化
 	public static CommonApi getInstance(){
 		return instance;
 	}
@@ -205,10 +205,8 @@ public class CommonApi {
 	        byte[] bitmapBytes = baos.toByteArray();
 	    	result = Base64.encodeToString(bitmapBytes, Base64.DEFAULT);  
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         return "data:image/jpg;base64,"+result;
 	}
-	
 }

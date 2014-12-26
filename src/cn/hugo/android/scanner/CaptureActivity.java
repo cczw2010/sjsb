@@ -387,19 +387,18 @@ public final class CaptureActivity extends Activity implements
 
 	@Override
 	public void onClick(View v) {
-		switch (v.getId()) {
-			case R.id.capture_flashlight:
-				if (isFlashlightOpen) {
-					cameraManager.setTorch(false); // 关闭闪光灯
-					isFlashlightOpen = false;
-				}
-				else {
-					cameraManager.setTorch(true); // 打开闪光灯
-					isFlashlightOpen = true;
-				}
-				break;
-			default:
-				break;
+		int id = v.getId();
+		//工程作为liberay的话switch只能用常量，所以只能改为if else   #by awen
+		if (id == R.id.capture_flashlight) {
+			if (isFlashlightOpen) {
+				cameraManager.setTorch(false); // 关闭闪光灯
+				isFlashlightOpen = false;
+			}
+			else {
+				cameraManager.setTorch(true); // 打开闪光灯
+				isFlashlightOpen = true;
+			}
+		} else {
 		}
 
 	}

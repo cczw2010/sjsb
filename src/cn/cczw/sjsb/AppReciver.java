@@ -1,4 +1,4 @@
-package cn.cczw.sjsb.base;
+package cn.cczw.sjsb;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -6,9 +6,9 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.NetworkInfo.State;
-import android.util.Log;
 
-public class AppReciver extends  BroadcastReceiver{
+public class AppReciver extends BroadcastReceiver{
+	//网络状态
 	final public static int  STATUS_NET_NONE=0;
 	final public static int  STATUS_NET_WIFI=1;
 	final public static int  STATUS_NET_GPRS=2;
@@ -17,8 +17,13 @@ public class AppReciver extends  BroadcastReceiver{
 	private static AppReciver instance = null;
 	private boolean hasNetwork=false;
 	private int netType;
+	//禁止外部new
+	private AppReciver(){}
 	//获取唯一实例
 	public static AppReciver getInstance(){
+		if(instance==null){
+			instance = new AppReciver();
+		}
 		return instance;
 	}
 	//获取网络状态
@@ -29,15 +34,9 @@ public class AppReciver extends  BroadcastReceiver{
 	public int getNetType(){
 		return this.netType;
 	}
-	//构造函数
-	public AppReciver(){
-		if(instance==null){
-			instance = this;
-		}
-	}
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		Log.d("cczw", "ACTION=="+intent.getAction());
+		//Log.d("cczw", "ACTION=="+intent.getAction());
 		if(intent.getAction().equals("android.net.conn.CONNECTIVITY_CHANGE")){
 			checkNetStatus();
 		}
@@ -59,6 +58,7 @@ public class AppReciver extends  BroadcastReceiver{
 		ConnectivityManager connManager = (ConnectivityManager)MyApplication.getInstance().getSystemService(Context.CONNECTIVITY_SERVICE);  
 		// 获取代表联网状态的NetWorkInfo对象  
 		NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
+		
 		if(networkInfo==null||!networkInfo.isAvailable()){
 			hasNetwork=false;
 			netType = STATUS_NET_NONE;

@@ -1,4 +1,4 @@
-package cn.cczw.sjsb.base;
+package cn.cczw.sjsb;
 
 import android.content.Context;
 import android.util.AttributeSet;

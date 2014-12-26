@@ -106,46 +106,42 @@ public final class CaptureActivityHandler extends Handler {
 
 	@Override
 	public void handleMessage(Message message) {
-		switch (message.what) {
-			case R.id.restart_preview: // 准备进行下一次扫描
-				Log.d(TAG, "Got restart preview message");
-				restartPreviewAndDecode();
-				break;
-			case R.id.decode_succeeded:
-				Log.d(TAG, "Got decode succeeded message");
-				state = State.SUCCESS;
-				Bundle bundle = message.getData();
-				Bitmap barcode = null;
-				float scaleFactor = 1.0f;
-				if (bundle != null) {
-					byte[] compressedBitmap = bundle
-							.getByteArray(DecodeThread.BARCODE_BITMAP);
-					if (compressedBitmap != null) {
-						barcode = BitmapFactory.decodeByteArray(
-								compressedBitmap, 0, compressedBitmap.length,
-								null);
-						// Mutable copy:
-						barcode = barcode.copy(Bitmap.Config.ARGB_8888, true);
-					}
-					scaleFactor = bundle
-							.getFloat(DecodeThread.BARCODE_SCALED_FACTOR);
+		//工程作为liberay的话switch只能用常量，所以只能改为if else   #by awen
+		if (message.what==R.id.restart_preview) {// 准备进行下一次扫描
+			Log.d(TAG, "Got restart preview message");
+			restartPreviewAndDecode();
+		} else if(message.what == R.id.decode_succeeded) {
+			Log.d(TAG, "Got decode succeeded message");
+			state = State.SUCCESS;
+			Bundle bundle = message.getData();
+			Bitmap barcode = null;
+			float scaleFactor = 1.0f;
+			if (bundle != null) {
+				byte[] compressedBitmap = bundle
+						.getByteArray(DecodeThread.BARCODE_BITMAP);
+				if (compressedBitmap != null) {
+					barcode = BitmapFactory.decodeByteArray(
+							compressedBitmap, 0, compressedBitmap.length,
+							null);
+					// Mutable copy:
+					barcode = barcode.copy(Bitmap.Config.ARGB_8888, true);
 				}
-				activity.handleDecode((Result) message.obj, barcode,
-						scaleFactor);
-				break;
-			case R.id.decode_failed:
+				scaleFactor = bundle
+						.getFloat(DecodeThread.BARCODE_SCALED_FACTOR);
+			}
+			activity.handleDecode((Result) message.obj, barcode,
+					scaleFactor);
+		}else if(message.what == R.id.decode_failed){
 				// We're decoding as fast as possible, so when one decode fails,
 				// start another.
 				state = State.PREVIEW;
 				cameraManager.requestPreviewFrame(decodeThread.getHandler(),
 						R.id.decode);
-				break;
-			case R.id.return_scan_result:
+		}else if(message.what == R.id.return_scan_result){
 				Log.d(TAG, "Got return scan result message");
 				activity.setResult(Activity.RESULT_OK, (Intent) message.obj);
 				activity.finish();
-				break;
-			case R.id.launch_product_query:
+		}else if(message.what == R.id.launch_product_query){
 				Log.d(TAG, "Got product query message");
 				String url = (String) message.obj;
 
@@ -181,7 +177,6 @@ public final class CaptureActivityHandler extends Handler {
 					Log.w(TAG, "Can't find anything to handle VIEW of URI "
 							+ url);
 				}
-				break;
 		}
 	}
 

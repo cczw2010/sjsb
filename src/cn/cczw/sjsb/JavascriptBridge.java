@@ -1,4 +1,4 @@
-package cn.cczw.sjsb.base;
+package cn.cczw.sjsb;
 
 import java.io.File;
 import java.util.Map;
@@ -18,7 +18,6 @@ import android.webkit.CookieSyncManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.widget.Toast;
-import cn.cczw.sjsb.InflaterActivity;
 import cn.cczw.util.DataCleanManager;
 import cn.hugo.android.scanner.CaptureActivity;
 
@@ -115,7 +114,9 @@ public class JavascriptBridge {
 	 */
 	@JavascriptInterface
 	public void exitApp(){
-		activitycontent.exitApp();
+		Intent intent = new Intent();  
+        intent.setAction(BaseActivity.ACTION_EXITAPP);  
+        activitycontent.sendBroadcast(intent); 
 	}
 	/**
 	 *  显示loading
@@ -354,12 +355,19 @@ public class JavascriptBridge {
 	 */
 	@JavascriptInterface
 	public String getLocation(){
-		GpsApi.getInstance().start();
+		SensorApi sensorApi = SensorApi.getInstance();
+		sensorApi.startLocation();
 		BDLocation loc = null;
 		while(loc==null){
-			loc = GpsApi.getInstance().getLocation();
+			loc = SensorApi.getInstance().getLocation();
+			//Log.d("cczw", loc+"");
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
-		GpsApi.getInstance().stop();
+		sensorApi.stopLocation();
 		
 		String json = loc==null?"":"{\"longitude\":"+loc.getLongitude()+ //经度
 				";\"latitude\":"+loc.getLatitude()+				//维度
@@ -385,14 +393,14 @@ public class JavascriptBridge {
 	 */
 	@JavascriptInterface
 	public void vibrator(int continues, int betweens ,int times){
-		VibratorApi.getInstance().start(continues,betweens,times);
+		SensorApi.getInstance().startVibrator(continues,betweens,times);
 	}
 	/**
 	 * 停止震动
 	 */
 	@JavascriptInterface
 	public void stopVibrator(){
-		VibratorApi.getInstance().stop();
+		SensorApi.getInstance().stopVibrator();
 	}
 	
 	/**新开web页面

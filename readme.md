@@ -60,7 +60,7 @@
 
 		/**
 		* 设置当前页下拉控件的状态，初始为DISABLED
-		* @param String mode  DISABLED 禁用，ENABLE启用
+		* @param String mode  DISABLED 禁用，ENABLE启用（启用后如果不设置下拉回调方法默认为刷新当前网页`）
 		*/
 		SJSB.setSwipeMode(mode);
 		
@@ -219,7 +219,7 @@
 * 新开窗口
 
 		/**新开页面
-		*@param String ptype 页面类型  web:纯webview  native:纯原生空白页面（原生控件自定义生成）
+		*@param String ptype 页面类型  web:纯webview  native:纯原生空白页面（原生控件自定义生成,暂未实现）
 		*@param String config 配置文件  ptype=web时：url；ptype=native时：json配置字符串
 		*/
 		SJSB. openView(ptype,config)
@@ -227,8 +227,9 @@
 * 外部浏览器吊起应用
 
 		在web中写入如下url:
-		sjsb://cn.cczw/xxxx ，
-		即可吊起应用，详细的交互命令暂不实现，优先级放在上下拉控件低版本bug优化之后
+		sjsb://cn.cczw(包名) ，
+		即可吊起应用，schame是建立程序时设定的消息头。
+		详细的交互命令暂不实现，优先级放在上下拉控件低版本bug优化之后
 
 
 

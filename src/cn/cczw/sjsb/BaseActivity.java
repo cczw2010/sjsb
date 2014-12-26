@@ -1,4 +1,4 @@
-package cn.cczw.sjsb.base;
+package cn.cczw.sjsb;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -7,7 +7,10 @@ import java.io.IOException;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,8 +28,6 @@ import android.webkit.WebSettings.LayoutAlgorithm;
 import android.webkit.WebSettings.RenderPriority;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import cn.cczw.sjsb.MainActivity;
-import cn.cczw.sjsb.R;
 
 @SuppressLint({ "InlinedApi", "ResourceAsColor" })
 public class BaseActivity extends Activity {
@@ -34,8 +35,11 @@ public class BaseActivity extends Activity {
 	public swebview swebview = null;
 	private Handler shandler = null;
 	private SwipeRefreshLayout mSwipeLayout;
+	private BroadcastReceiver reciver = null;
 
-	public static String EXITAPP_MESSAGE = "exitapp";   //退出程序的标示
+	
+	public static String ACTION_EXITAPP = null;   //退出程序的广播通知
+
 	/*js request_code部分*/
 	final public static int JS_REQUEST_CODE_CAMERA = 930001;		//js相机原图 request_code
 	final public static int JS_REQUEST_CODE_CAMERA_CAPTURE = 930002;//js相机缩略图 request_code
@@ -43,7 +47,6 @@ public class BaseActivity extends Activity {
     /*message部分*/
     final public static int MESSAGE_SWIPEMODE = 1000;				// 设置下拉控件可不可用
     final public static int MESSAGE_CLEARSWIPEANIM = 1001;			// 清空下拉动画
-    
 	//临时文件
 	public static String JS_CAMERA_JPG = null;	//相机照的临时文件
 	final public static String JS_SNAPSHOT_JPG = "snapshot_js.jpg";//快照临时文件
@@ -60,6 +63,12 @@ public class BaseActivity extends Activity {
 		
 		app = (MyApplication) MyApplication.getInstance();
 		shandler = new BaseHandler();
+		ACTION_EXITAPP = getPackageName()+"_EXITAPP";
+		//注册广播接收
+		IntentFilter ifilter=new IntentFilter();
+		ifilter.addAction(ACTION_EXITAPP);//退出app
+		reciver = new ActivityReciver();
+		registerReceiver(reciver, ifilter);
 	}
 	@Override
 	protected void onResume() {
@@ -83,11 +92,6 @@ public class BaseActivity extends Activity {
 		super.onNewIntent(intent);
 		//.activity的启动模式是singleTask,getIntent()获取的是旧的intent，必须手动更新一下intent,否则其他地方获取不到最新值
 		setIntent(intent);
-		//处理退出消息
-		String msg = intent.getStringExtra("data");
-		if(msg!=null && EXITAPP_MESSAGE.equals(msg)){
-			this.finish();
-		}
 	}
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
@@ -109,6 +113,11 @@ public class BaseActivity extends Activity {
 			super.onBackPressed();
 		}
 	}
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+        unregisterReceiver(reciver);//这一句必须加上，不然虽然能退出，但报很多错误  
+	};
 	/* ----------------------- web --------------------------- */
 	@SuppressWarnings("deprecation")
 	public void initWebView(int webviewid,String url,boolean enablePullPush) {
@@ -122,7 +131,8 @@ public class BaseActivity extends Activity {
 					if(JS_SWIPEREFRESH_CALLBACK!=null && JS_SWIPEREFRESH_CALLBACK!=""){
 						runjs(JS_SWIPEREFRESH_CALLBACK+"()");
 					}else{
-						mSwipeLayout.setRefreshing(false);
+//						mSwipeLayout.setRefreshing(false);
+						swebview.reload();
 					}
 				}
 			});
@@ -189,15 +199,7 @@ public class BaseActivity extends Activity {
 		// swebview.cancelLongPress(); //奇怪，这个设置后 有时候轻点击也不管用了
 		swebview.loadUrl((url).trim());
 	}
-	/**
-	 *  清空下拉动画
-	 */
-	private void clearSwipeLayoutAnim(){
-		if(mSwipeLayout!=null){
-			mSwipeLayout.setRefreshing(false);
-		}
-	}
-	
+
 	class webviewClient extends WebViewClient{
  		@Override
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -289,6 +291,31 @@ public class BaseActivity extends Activity {
 			//}
 		}
 	}
+	/**
+	 * 注册广播接收
+	 */
+	class ActivityReciver extends  BroadcastReceiver{
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if(intent.getAction().equals(ACTION_EXITAPP)){
+				//Log.d("cczw","exitapp 广播");
+				unregisterReceiver(this);//这一句必须加上，不然虽然能退出，但报很多错误  
+	            finish();//到这里，多个activity可以关闭掉程序了 但是进程仍然存在，因此加上了下边一句话，可以杀死进程  
+	            android.os.Process.killProcess(android.os.Process.myPid());  
+			}
+		}
+	}
+
+	/**
+	 *  清空下拉动画
+	 */
+	private void clearSwipeLayoutAnim(){
+		if(mSwipeLayout!=null){
+			mSwipeLayout.setRefreshing(false);
+		}
+	}
+	
+	
 	/* ----------------------- common method --------------------------- */
 	/**
 	 * 所有公共的message消息都从这里处理，包括js消息
@@ -316,7 +343,7 @@ public class BaseActivity extends Activity {
 					}
 				}
 			case MESSAGE_CLEARSWIPEANIM:
-				//设置下拉刷新不可用
+				//停止当前正在进行的下拉动画
 				clearSwipeLayoutAnim();
 			default:
 				break;
@@ -324,7 +351,7 @@ public class BaseActivity extends Activity {
 		}
 	}
 	/**
-	 * 发送消息
+	 * 发送消息,并不多此一举，有助于进入本线程，防止跨线程操作
 	 * @param message
 	 * @param fn
 	 * @param param
@@ -338,18 +365,6 @@ public class BaseActivity extends Activity {
 		shandler.sendMessage(msg);
 	}
 	
-	/**
-	 * 退出app
-	 */
-	public void exitApp(){
-		//Intent intent=new Intent(Intent.ACTION_MAIN);
-		//intent.addCategory(Intent.CATEGORY_HOME); 返回桌面
-		Intent intent = new  Intent();
-		intent.setClass(this, MainActivity.class);
-		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-		intent.putExtra("data", EXITAPP_MESSAGE);
-		startActivity(intent);
-	}
 	/**执行js方法，无返回值*/
 	public void runjs(String jsstr){
 		//Log.d("SJSB",jsstr);

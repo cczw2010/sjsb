@@ -57,14 +57,12 @@ final class DecodeHandler extends Handler {
 		if (!running) {
 			return;
 		}
-		switch (message.what) {
-			case R.id.decode:
-				decode((byte[]) message.obj, message.arg1, message.arg2);
-				break;
-			case R.id.quit:
-				running = false;
-				Looper.myLooper().quit();
-				break;
+		//工程作为liberay的话switch只能用常量，所以只能改为if else   #by awen
+		if (message.what == R.id.decode) {
+			decode((byte[]) message.obj, message.arg1, message.arg2);
+		} else if (message.what == R.id.quit) {
+			running = false;
+			Looper.myLooper().quit();
 		}
 	}
 

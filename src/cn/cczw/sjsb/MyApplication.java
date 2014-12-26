@@ -1,4 +1,4 @@
-package cn.cczw.sjsb.base;
+package cn.cczw.sjsb;
 
 import java.io.File;
 
@@ -6,10 +6,8 @@ import android.app.Application;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
-import android.util.Log;
 
 public class MyApplication extends Application {
-	public static String TAG="cczw";
 	//base
 	private final String APPCOUNTER="_app_counter";
 	private static MyApplication instance=null;
@@ -25,10 +23,10 @@ public class MyApplication extends Application {
 		if(instance==null){
 			instance=this;
 			Context context=getApplicationContext();
+			
 			//初始化一些公用的单例api
 			new CommonApi(context);
-			new GpsApi(context);
-			new VibratorApi(context);
+			new SensorApi(context);
 			//应用自定义缓存文件路径
 			path_cachefile = CommonApi.getInstance().getSdcardPath()+File.separator+context.getPackageName();
 			//同时生成sdcard目录
@@ -44,9 +42,8 @@ public class MyApplication extends Application {
 				appLoadingnum = Integer.parseInt(counter)+1;
 			}
 			CommonApi.getInstance().setPrefString(APPCOUNTER, String.valueOf(appLoadingnum));
-			Log.d("SJSB", "appcounter+"+appLoadingnum);
 			//receiver
-			receiver=new AppReciver();
+			receiver=AppReciver.getInstance();
 			IntentFilter ifilter=new IntentFilter();
 			ifilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);//网络状态
 			registerReceiver(receiver, ifilter);
