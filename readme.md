@@ -2,29 +2,10 @@
 
 本框架适用于hybird开发。为js提供各种原生支持api.
 
-当前版本`v1.1`  email:`71752352@qq.com` author:`awen`
+当前版本`v2.0`  email:`71752352@qq.com` author:`awen`
 
-##-----------------使用方法：
+@2014-12-26将sjsb修改为库工程，对应使用demo地址：<https://github.com/cczw2010/sjsbdemo>
 
-####初始化
-
-* 加载本地文件：  
-	应用默认的入口是Assets中的index.html文件。 你只需要修改这个文件就可以了。  
-	
-* 加载远程路径：  
-	那么你需要修改MainActivity中的initWebview方法中的url地址为你的远程地址
-	
-* 配置方式：  
-	期待中。。。
-	
-####AndroidManifest.xml配置
-
- AndroidManifest.xml中的配置
-
- 个人开发需要修改 AndroidManifest.xml中meta里百度sdk的AcessKey AcessKey请参考百度开发文档。
- 
- 当然你只是测试的话也可以不改。用awen提供的测试key也可以。~
- 
 
 ##------------------API
 
