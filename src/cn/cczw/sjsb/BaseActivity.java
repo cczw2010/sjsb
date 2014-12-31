@@ -140,7 +140,7 @@ public class BaseActivity extends Activity {
 		                            R.color.holo_green_light,
 		                            R.color.holo_orange_light,
 		                            R.color.holo_red_light);
-	        mSwipeLayout.setEnabled(false);
+	        mSwipeLayout.setEnabled(true);
 		}
 		
 		WebSettings ws = swebview.getSettings();

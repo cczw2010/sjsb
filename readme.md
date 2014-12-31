@@ -40,7 +40,7 @@
 * 设置下拉控件的状态
 
 		/**
-		* 设置当前页下拉控件的状态，初始为DISABLED
+		* 设置当前页下拉控件的状态，初始为ENABLE
 		* @param String mode  DISABLED 禁用，ENABLE启用（启用后如果不设置下拉回调方法默认为刷新当前网页`）
 		*/
 		SJSB.setSwipeMode(mode);
@@ -203,7 +203,7 @@
 		*@param String ptype 页面类型  web:纯webview  native:纯原生空白页面（原生控件自定义生成,暂未实现）
 		*@param String config 配置文件  ptype=web时：url；ptype=native时：json配置字符串
 		*/
-		SJSB. openView(ptype,config)
+		SJSB.openView(ptype,config)
 		
 * 外部浏览器吊起应用
 
