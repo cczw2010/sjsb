@@ -2,6 +2,7 @@ package cn.cczw.sjsb;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Window;
 
 /**
@@ -23,6 +24,7 @@ public class InflaterActivity extends BaseActivity{
 		switch(ptype){
 		case "web":
 			setContentView(R.layout.webview_swiperefresh);
+			config = resolveUrl(config);
 			initWebView(R.id.webview,config,true);
 			break;
 		case "native":
@@ -30,5 +32,14 @@ public class InflaterActivity extends BaseActivity{
 			//LinearLayout root = (LinearLayout) findViewById(R.id.root_layout);
 			break;
 		}
+	}
+	/**
+	 * web文件地址解析，本地地址自动转成android assets格式，url地址不作处理
+	 */
+	private String  resolveUrl(String url){
+		if(!url.startsWith("http:")&&!url.startsWith("file:")){
+			url = "file:///android_asset/"+url;
+		}
+		return url;
 	}
 }
